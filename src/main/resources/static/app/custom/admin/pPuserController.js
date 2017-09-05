@@ -1,12 +1,12 @@
 angular
     .module('altairApp')
-    	.controller("userCtrl",['$cookies','$scope','p_role','mainService','$state','sweet',
-	        function ($cookies,$scope,p_role,mainService,$state,sweet) {
+    	.controller("userCtrl",['$cookies','$scope','p_role','p_org','mainService','$state','sweet',
+	        function ($cookies,$scope,p_role,p_org,mainService,$state,sweet) {
     		  /*  var aj=p_uni;
 	    		var init={"text":"ROOT","value":"0"};	    	
 				aj.push(init);*/
 			
-    		
+    			console.log(p_org);
     			$scope.domain="com.netgloo.models.LutUser.";
     			
     			
@@ -111,8 +111,6 @@ angular
 				if (cars==null || cars==""){}
 				else{var array = vdata.roleid.split(",");}
 
-
-				console.log(array);
 				$scope.ud = {
 					"id": vdata.id,
 					"org": vdata.departmentid,
@@ -128,16 +126,14 @@ angular
 					roles: array,
 				};
 			}
-    			
-                
-             
+
        	    $scope.puserGrid = {
 				dataSource: {
 					transport: {
 						read:  {
 							url: "/api/core/list/LutUser?access_token="+$cookies.get('access_token'),
-							contentType:"application/json; charset=UTF-8",
-							type:"POST"
+                            type: 'GET',
+                            dataType: "json"
 						},
 						update: {
 							url: "/api/core/update/"+$scope.domain+"?access_token="+$cookies.get('access_token'),
@@ -165,9 +161,10 @@ angular
 								$(".k-grid").data("kendoGrid").dataSource.read();
 							}
 						},
-						parameterMap: function(options) {
-						 return JSON.stringify(options);
-					   }
+                        parameterMap: function(options) {
+                            options.data=JSON.stringify( options)
+                            return options;
+                        }
 					},
 					schema: {
 						data:"data",

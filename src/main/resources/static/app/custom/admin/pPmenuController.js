@@ -2,9 +2,7 @@ angular
     .module('altairApp')
     	.controller("menuCtrl",['$rootScope','$scope','p_menu','mainService','$state','sweet','$cookies',
 	        function ($rootScope,$scope,p_menu,mainService,$state,sweet,$cookies) {
-	    		var aj=p_menu;
-	    		var init={"text":"ROOT","value":"null"};	    	
-				aj.push(init);
+	    		var aj=[{"text":"ROOT","value":"null"}];
                 var forumType=[{"text":"inline","value":1},{"text":"pop-up","value":2},{"text":"batch","value":3},{"text":"custom","value":4}];
                 $scope.domain="com.macro.dev.models.LutMenu.";
 	        	$scope.selectize_uptype_options=forumType;
@@ -206,13 +204,13 @@ angular
 					buttonCount: 5
 				},
 				columns: [
-				  	{title: "#",template: "<span class='row-number'></span>", width:"60px"},
-				  	{ field:"menuname", title: "Нэр /Mn/" },
-				  	{ field: "stateurl", title:"URL" },
-				  	{ field: "uicon", title:"IKON"},
-				  	{ field: "parentid", values: aj, title:"Эцэг цэс"},
-				  	{ field: "orderid", title:"Дараалал", width: "200px" },
-					{ field: "uptype", title:"форумын төрөл", width: "200px",values:forumType }
+				  	{title: "#",template: "<span class='row-number'></span>", width:60},
+				  	{ field:"menuname", title: "Нэр /Mn/", width: 200 },
+				  	{ field: "stateurl", title:"URL", width: 200 },
+				  	{ field: "uicon", title:"IKON", width: 150},
+				  	{ field: "parentid", values: aj, title:"Эцэг цэс", width: 200},
+				  	{ field: "orderid", title:"Дараалал", width: 200 },
+					{ field: "uptype", title:"форумын төрөл", width: 200,values:forumType }
 				],
 				dataBound: function () {
 				var rows = this.items();
