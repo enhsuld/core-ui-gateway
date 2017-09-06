@@ -34,6 +34,150 @@ altairApp
 
     	   $stateProvider
 
+               .state("restricted.pages.egnosettings", {
+                   url: "/settings/egno",
+                   templateUrl: 'app/custom/settings/egnoSettingsView.html',
+                   controller: 'egnoSettingsCtrl',
+                   resolve: {
+                       deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                           return $ocLazyLoad.load(['lazy_KendoUI',
+                               'lazy_parsleyjs',
+                               'app/custom/settings/egnoSettingsController.js'
+                           ]);
+                       }],
+                       orgs: function($http,$state){
+                           return $http({ method: 'GET', url: '/api/core/resource/LutCmmOrganization' })
+                               .then(function (data) {
+                                   return data.data;
+                               })
+                               .catch(function(response) {
+                                   $state.go("login");
+                               });
+                       }
+                   },
+                   data: {
+                       pageTitle: 'Цэс'
+                   }
+               })
+
+               .state("restricted.pages.meansettings", {
+                   url: "/settings/mean",
+                   templateUrl: 'app/custom/settings/meanSettingsView.html',
+                   controller: 'meanSettingsCtrl',
+                   resolve: {
+                       deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                           return $ocLazyLoad.load(['lazy_KendoUI',
+                               'lazy_parsleyjs',
+                               'app/custom/settings/meanSettingsController.js'
+                           ]);
+                       }],
+                       orgs: function($http,$state){
+                           return $http({ method: 'GET', url: '/api/core/resource/LutCmmOrganization' })
+                               .then(function (data) {
+                                   return data.data;
+                               })
+                               .catch(function(response) {
+                                   $state.go("login");
+                               });
+                       }
+                   },
+                   data: {
+                       pageTitle: 'Цэс'
+                   }
+               })
+
+               .state("restricted.pages.taxsettings", {
+                   url: "/settings/tax",
+                   templateUrl: 'app/custom/settings/taxSettingsView.html',
+                   controller: 'taxSettingsCtrl',
+                   resolve: {
+                       deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                           return $ocLazyLoad.load(['lazy_KendoUI',
+                               'lazy_parsleyjs',
+                               'app/custom/settings/taxSettingsController.js'
+                           ]);
+                       }],
+                       orgs: function($http,$state){
+                           return $http({ method: 'GET', url: '/api/core/resource/LutCmmOrganization' })
+                               .then(function (data) {
+                                   return data.data;
+                               })
+                               .catch(function(response) {
+                                   $state.go("login");
+                               });
+                       }
+                   },
+                   data: {
+                       pageTitle: 'Цэс'
+                   }
+               })
+
+               .state("restricted.pages.accsettings", {
+                   url: "/settings/account",
+                   templateUrl: 'app/custom/settings/accSettingsView.html',
+                   controller: 'accSettingsCtrl',
+                   resolve: {
+                       deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                           return $ocLazyLoad.load([
+                               'lazy_countUp',
+                               'lazy_charts_peity',
+                               'lazy_charts_easypiechart',
+                               'lazy_charts_metricsgraphics',
+                               'lazy_charts_chartist',
+                               'lazy_weathericons',
+                               'lazy_parsleyjs',
+                               'lazy_dropify',
+                               'lazy_ckeditor',
+                               'lazy_KendoUI',
+                               'app/custom/settings/accSettingsController.js'
+                           ]);
+                       }],
+                   },
+                   data: {
+                       pageTitle: 'Үндсэн самбар'
+                   },
+                   ncyBreadcrumb: {
+                       label: 'Үндсэн самбар',
+                       parent:'restricted.work.waudit'
+                   }
+               })
+
+          /*     .state("restricted.pages.accsettings", {
+                   url: "/settings/account",
+                   templateUrl: 'app/custom/settings/accSettingsView.html',
+                   controller: 'accSettingsCtrl',
+                   resolve: {
+                       deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                           return $ocLazyLoad.load(['lazy_KendoUI',
+                               'lazy_parsleyjs',
+                               'app/custom/settings/accSettingsController.js'
+                           ]);
+                       }],
+                       p_menu: function($http,$state){
+                           return $http({ method: 'GET', url: '/api/core/resource/LutMenu' })
+                               .then(function (data) {
+                                   return data.data;
+                               })
+                               .catch(function(response) {
+                                   $state.go("login");
+                               });
+                       },
+					    role: function($http,$state,$scope){
+						return $http({ method: 'GET', url: '/api/core/rjson/'+$scope.user.id+'/'+$state.current.name})
+						.then(function (data) {
+						return data.data;
+						})
+						.catch(function(response) {
+						$state.go("login");
+						});
+						}
+
+                   },
+                   data: {
+                       pageTitle: 'Цэс'
+                   }
+               })*/
+
                .state("restricted.pages.cmmorganization", {
                    url: "/organization",
                    templateUrl: 'app/custom/admin/pCmmOrganizationView.html',

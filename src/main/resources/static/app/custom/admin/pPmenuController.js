@@ -2,12 +2,14 @@ angular
     .module('altairApp')
     	.controller("menuCtrl",['$rootScope','$scope','p_menu','mainService','$state','sweet','$cookies',
 	        function ($rootScope,$scope,p_menu,mainService,$state,sweet,$cookies) {
-	    		var aj=[{"text":"ROOT","value":"null"}];
+	    	//	var aj=[{"text":"ROOT","value":"null"}];
                 var forumType=[{"text":"inline","value":1},{"text":"pop-up","value":2},{"text":"batch","value":3},{"text":"custom","value":4}];
                 $scope.domain="com.macro.dev.models.LutMenu.";
 	        	$scope.selectize_uptype_options=forumType;
     			var $formValidate = $('#form_val');
-	    		
+                var aj=p_menu;
+                var init={"text":"ROOT","value":"null"};
+                aj.push(init);
 	    		$formValidate
 	            .parsley()
 	            .on('form:validated',function() {
