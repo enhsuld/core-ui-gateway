@@ -34,6 +34,32 @@ altairApp
 
     	   $stateProvider
 
+               .state("restricted.pages.mgtsettings", {
+                   url: "/settings/mgt",
+                   templateUrl: 'app/custom/settings/mgtSettingsView.html',
+                   controller: 'mgtSettingsCtrl',
+                   resolve: {
+                       deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                           return $ocLazyLoad.load(['lazy_KendoUI',
+                               'lazy_parsleyjs',
+                               'app/custom/settings/mgtSettingsController.js'
+                           ]);
+                       }],
+                       orgs: function($http,$state){
+                           return $http({ method: 'GET', url: '/api/core/resource/LutCmmOrganization' })
+                               .then(function (data) {
+                                   return data.data;
+                               })
+                               .catch(function(response) {
+                                   $state.go("login");
+                               });
+                       }
+                   },
+                   data: {
+                       pageTitle: 'Цэс'
+                   }
+               })
+
                .state("restricted.pages.egnosettings", {
                    url: "/settings/egno",
                    templateUrl: 'app/custom/settings/egnoSettingsView.html',

@@ -2,55 +2,27 @@ angular
     .module('altairApp')
     	.controller("userCtrl",['$cookies','$scope','p_role','p_org','mainService','$state','sweet',
 	        function ($cookies,$scope,p_role,p_org,mainService,$state,sweet) {
-    		  /*  var aj=p_uni;
-	    		var init={"text":"ROOT","value":"0"};	    	
-				aj.push(init);*/
-			
-    			console.log(p_org);
-    			$scope.domain="com.netgloo.models.LutUser.";
+
+    			$scope.domain="com.macro.dev.models.LutUser.";
     			
     			
-    			$scope.selectize_a_data=[];
+    			$scope.selectize_a_data=p_org;
     			$scope.selectize_b_data= [];
 			    var planets_data = $scope.selectize_role = p_role;
     			
     			$scope.ud = {
 	                "id":0,
-	                "org": "",	    		           
-	                "pos": "",
-	                "fname": "",
-	                "gname": "",	    		           
-	                "phone": "",
-	                "mail": "",
-	                "uname": "",	    		           
-	                "pass": "",
-	                "roles": "",
-	                "isac": "",
-	                "isst": "",
-	                roles: ["925","933"],	  
 	            };
     			
     			$scope.res=function(){
     				$scope.ud = {
-    		                "id":0,
-    		                "org": "",	    		           
-    		                "pos": "",
-    		                "fname": "",
-    		                "gname": "",	    		           
-    		                "phone": "",
-    		                "mail": "",
-    		                "uname": "",	    		           
-    		                "pass": "",
-    		                "roles": "",
-    		                "isac": "",
-    		                "isst": ""
-    		            };			
-    				
-    			}   			
+    					id:0
+					};
+    			}
     				
 				$scope.addUser = function() {
 					 var mdl = UIkit.modal("#modal_update_user");
-  	    		     mainService.withdata('PUT','/core/useradd/'+$scope.ud.id, $scope.ud)
+  	    		     mainService.withdata('PUT','/api/core/user/add/'+$scope.ud.id, $scope.ud)
 	  		   			.then(function(data){
 	  		   				mdl.hide();
 	  		   				
@@ -107,22 +79,26 @@ angular
                 
 			$scope.update=function(vdata){
 
-				var cars = vdata.roleid;
+				var cars = vdata.lutRoles;
 				if (cars==null || cars==""){}
-				else{var array = vdata.roleid.split(",");}
+				else{
+					var array = [];
+                    angular.forEach(cars, function(value, key) {
+                    	array.push(value.id);
+                    });
+				}
 
 				$scope.ud = {
 					"id": vdata.id,
-					"org": vdata.departmentid,
-					"pos": vdata.positionid,
-					"fname": vdata.familyname,
-					"gname": vdata.givenname,
-					"phone": vdata.mobile,
-					"mail": vdata.email,
-					"uname": vdata.username,
-					"pass": vdata.password,
-					"isac": vdata.isactive,
-					"isst": vdata.isstate,
+					"organizationid": vdata.organizationid,
+					"positionid": vdata.positionid,
+					"familyname": vdata.familyname,
+					"givenname": vdata.givenname,
+					"mobile": vdata.mobile,
+					"email": vdata.email,
+					"username": vdata.username,
+					"password": vdata.password,
+					"isactive": vdata.isactive,
 					roles: array,
 				};
 			}
@@ -183,8 +159,7 @@ angular
 								mobile: { type: "string"},
 								username: { type: "string", validation: { required: true} },
 								password: { type: "string", validation: { required: true} },
-								isactive: { type: "boolean" },
-								isst: { type: "boolean" }
+								isactive: { type: "boolean" }
 							 }
 						 }
 
@@ -214,13 +189,14 @@ angular
 				},
 				columns: [
 					 { title: "#",template: "<span class='row-number'></span>", locked: true, width:"70px"},
+                     { field:"organizationid", title: "Байгууллага",values:p_org,width: 150},
 					 { field:"familyname", title: "Овог",width: 150},
 					 { field:"givenname", title: "Нэр",width: 150 },
 					 { field:"mobile", title: "Утас",width: 150},
 					 { field:"email", title: "E-mail",width: 150},
 					 { field:"roleid", title: "Эрх" ,width: 150},
 					 { field:"username", title: "Нэвтрэх нэр" ,width: 150},
-					 { field:"password", title: "Нууц үг" ,width: 150},
+					 { field:"password",hidden:true, title: "Нууц үг" ,width: 150},
 					 { field:"isactive", title: "Идэвхитэй эсэх" ,width: 150},
 					 { template: kendo.template($("#update").html()),  width: "240px"}
 				],
