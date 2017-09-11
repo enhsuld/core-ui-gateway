@@ -121,12 +121,9 @@ angular
 							type:"POST"
 						},
 						destroy: {
-							url: "/api/core/delete/"+$scope.domain+"",
-							contentType:"application/json; charset=UTF-8",
-							type:"POST",
-							complete: function(e) {
-								 $("#notificationDestroy").trigger('click');
-							}
+							url: "/api/core/delete/"+$scope.domain+"?access_token="+$cookies.get('access_token'),
+                            dataType: "json",
+							type:"POST"
 						},
 						create: {
 							url: "/api/core/create/"+$scope.domain+"?access_token="+$cookies.get('access_token'),
