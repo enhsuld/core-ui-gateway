@@ -1,10 +1,12 @@
 angular
     .module('altairApp')
-    	.controller("invincomeCtrl",['$scope','$rootScope','orgs','mainService','$state','sweet','$cookies',
+    	.controller("newincomeCtrl",['$scope','$rootScope','orgs','mainService','$state','sweet','$cookies',
 	        function ($scope,$rootScope,orgs,mainService,$state,sweet,$cookies) {
 	    		var aj=[{"text":"ROOT","value":"null"}];
                 var forumType=[{"text":"inline","value":1},{"text":"pop-up","value":2},{"text":"batch","value":3},{"text":"custom","value":4}];
                 $scope.domain="com.macro.dev.models.SettingsMean.";
+                $scope.domainLocation="com.macro.dev.models.SettingsMean.";
+                $scope.domainCustomer="com.macro.dev.models.SettingsMean.";
 
                 $rootScope.toBarActive = true;
 
@@ -12,19 +14,49 @@ angular
                     $rootScope.toBarActive = false;
                 });
 
-
-                $scope.productsDataSource = {
-                    type: "odata",
-                    serverFiltering: true,
-                    transport: {
-                        read: {
-                            url: "https://demos.telerik.com/kendo-ui/service/Northwind.svc/Products",
+                var $formValidateLocation = $('#form_val_location');
+                $formValidateLocation
+                    .parsley()
+                    .on('form:validated',function() {
+                        $scope.$apply();
+                    })
+                    .on('field:validated',function(parsleyField) {
+                        if($(parsleyField.$element).hasClass('md-input')) {
+                            $scope.$apply();
                         }
-                    }
+                    });
+
+                var modal_location = UIkit.modal("#modal_location");
+                $scope.newLocation = function(x,y){
+                    modal_location.show();
                 };
 
-                var crudServiceBaseUrl = "https://demos.telerik.com/kendo-ui/service";
-                var dataSource = new kendo.data.DataSource({
+                var modal_customer = UIkit.modal("#modal_customer");
+                $scope.newLocation = function(x,y){
+                    modal_customer.show();
+                };
+
+                $scope.submitFormLocation = function(){
+                    mainService.withdata('POST', '/api/core/create/'+$scope.domainLocation,  $scope.formdataLocation).
+                    then(function(data){
+                        sweet.show('Мэдээлэл', 'Үйлдэл амжилттай.', 'success');
+                        $(".k-grid").data("kendoGrid").dataSource.read();
+                    });
+                }
+
+                var modal_customer = UIkit.modal("#modal_customer");
+                $scope.newCustomer = function(x,y){
+                    modal_customer.show();
+                    mainService.withdata('POST', '/api/core/create/'+$scope.domainCustomer,  $scope.formdataCustomer).
+                    then(function(data){
+                        sweet.show('Мэдээлэл', 'Үйлдэл амжилттай.', 'success');
+                        $(".k-grid").data("kendoGrid").dataSource.read();
+                    });
+                }
+
+
+                var crudServiceBaseUrl = "//demos.telerik.com/kendo-ui/service";
+                $scope.productsDataSource = {
                     batch: true,
                     transport: {
                         read:  {
@@ -50,28 +82,38 @@ angular
                             }
                         }
                     }
-                });
+                }
+
+                $scope.customerOptions = {
+                    filter: "startswith",
+                    dataSource: $scope.productsDataSource,
+                    dataTextField: "ProductName",
+                    dataValueField: "ProductID",
+                    optionLabel: "Харилцагч...",
+                    noDataTemplate: $("#noDataCustomerTemplate").html()
+                };
+                $scope.locationOptions = {
+                    filter: "startswith",
+                    dataSource: $scope.productsDataSource,
+                    dataTextField: "ProductName",
+                    dataValueField: "ProductID",
+                    optionLabel: "Байршил...",
+                    noDataTemplate: $("#noDataLocationTemplate").html()
+                };
 
                 $scope.tr={
                     receipttype:1
                 }
 
-
-                $("#hariltsagch").kendoComboBox({
-                    filter: "startswith",
-                    dataTextField: "ProductName",
-                    dataValueField: "ProductID",
-                    dataSource: dataSource,
-                    noDataTemplate: $("#noDataTemplate").html()
-                });
-
-                $("#bairshil").kendoComboBox({
-                    filter: "startswith",
-                    dataTextField: "ProductName",
-                    dataValueField: "ProductID",
-                    dataSource: dataSource,
-                    noDataTemplate: $("#noDataLocationTemplate").html()
-                });
+                $scope.recieptDefault=true;
+                $scope.receiptChange=function () {
+                    if($scope.tr.receipttype==1){
+                        $scope.recieptDefault=true;
+                    }
+                    else{
+                        $scope.recieptDefault=false;
+                    }
+                }
 
                 $scope.selectize_a_data = {
                     options: [
@@ -113,11 +155,14 @@ angular
                     placeholder: 'Банк...'
                 };
 
-
                 var modal_inventory = UIkit.modal("#modal_inventory");
                 $scope.inventory = function(){
                    // modal_inventory.show();
-                    $state.go('restricted.inv.newincome');
+                    $state.go('restricted.inv.');
+                }
+                
+                $scope.back=function () {
+                    $state.go('restricted.inv.income');
                 }
 
                 var $maskedInput = $('.masked_input');

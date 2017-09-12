@@ -8,6 +8,15 @@ angular
     .controller('mainCtrl', ['$scope','$http','$rootScope',
         function ($scope,$http,$rootScope) {
 
+            $scope.newLocation= function (item) {
+                alert(item);
+            }
+
+
+            $scope.newCustomer = function (item) {
+                alert(item);
+            }
+
      /*       $scope.$on('oauth:login', function(event, token) {
                 alert();
                 $http.defaults.headers.common.Authorization= 'Bearer ' + token.access_token;

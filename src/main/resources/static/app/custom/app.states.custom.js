@@ -48,7 +48,7 @@ altairApp
                        pageTitle: 'Бараа материал'
                    },
                    ncyBreadcrumb: {
-                       label: 'Бараа материалын худалдан авалтын жагсаалт'
+                       label: 'Бараа материал'
                    }
                })
                .state("restricted.inv.newincome", {
@@ -80,7 +80,8 @@ altairApp
                        pageTitle: 'Бараа материал нэмэх'
                    },
                    ncyBreadcrumb: {
-                       label: 'Худалдан авалт'
+                       label: 'Худалдан авалт',
+                       parent:'restricted.inv.income'
                    }
                })
                .state("restricted.pages.mgtsettings", {
