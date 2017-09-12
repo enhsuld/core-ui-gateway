@@ -174,7 +174,7 @@ define(function(require) {
         dataToPoints: function (data) {
             return data.mapArray(this.dimensions, function (radius, angle) {
                 return this.dataToPoint([radius, angle]);
-            }, this);
+            }, true, this);
         },
 
         /**
@@ -252,6 +252,7 @@ define(function(require) {
 
             return [x, y];
         }
+
     };
 
     return Polar;

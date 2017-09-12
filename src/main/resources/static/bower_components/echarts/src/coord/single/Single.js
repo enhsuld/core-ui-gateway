@@ -167,19 +167,19 @@ define(function (require) {
             var extentSum = axisExtent[0] + axisExtent[1];
             var isHorizontal = axis.isHorizontal();
 
-            axis.toGlobalCoord = isHorizontal ?
-                function (coord) {
+            axis.toGlobalCoord = isHorizontal
+                ? function (coord) {
                     return coord + coordBase;
-                } :
-                function (coord) {
+                }
+                : function (coord) {
                     return extentSum - coord + coordBase;
                 };
 
-            axis.toLocalCoord = isHorizontal ?
-                function (coord) {
+            axis.toLocalCoord = isHorizontal
+                ? function (coord) {
                     return coord - coordBase;
-                } :
-                function (coord) {
+                }
+                : function (coord) {
                     return extentSum - coord + coordBase;
                 };
         },
@@ -267,6 +267,7 @@ define(function (require) {
             pt[1 - idx] = idx === 0 ? (rect.y + rect.height / 2) : (rect.x + rect.width / 2);
             return pt;
         }
+
     };
 
     return Single;

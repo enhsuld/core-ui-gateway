@@ -276,14 +276,7 @@ define(function (require) {
             ecModel.init(null, null, theme, optionManager);
         }
 
-        // FIXME
-        // ugly
-        this.__lastOnlyGraphic = !!(option && option.graphic);
-        zrUtil.each(option, function (o, mainType) {
-            mainType !== 'graphic' && (this.__lastOnlyGraphic = false);
-        }, this);
-
-        this._model.setOption(option, optionPreprocessorFuncs, this.__lastOnlyGraphic);
+        this._model.setOption(option, optionPreprocessorFuncs);
 
         if (lazyUpdate) {
             this[OPTION_UPDATED] = {silent: silent};
@@ -809,21 +802,7 @@ define(function (require) {
 
             prepareView.call(this, 'chart', ecModel);
 
-            // FIXME
-            // ugly
-            if (this.__lastOnlyGraphic) {
-                each(this._componentsViews, function (componentView) {
-                    var componentModel = componentView.__model;
-                    if (componentModel && componentModel.mainType === 'graphic') {
-                        componentView.render(componentModel, ecModel, this._api, payload);
-                        updateZ(componentModel, componentView);
-                    }
-                }, this);
-                this.__lastOnlyGraphic = false;
-            }
-            else {
-                updateMethods.update.call(this, payload);
-            }
+            updateMethods.update.call(this, payload);
         }
     };
 
@@ -1140,7 +1119,7 @@ define(function (require) {
             }
 
             // Consider: id same and type changed.
-            var viewId = model.id + '_' + model.type;
+            var viewId = '_ec_' + model.id + '_' + model.type;
             var view = viewMap[viewId];
             if (!view) {
                 var classType = parseClassType(model.type);
@@ -1206,7 +1185,8 @@ define(function (require) {
             var data = series.getData();
             if (stack && data.type === 'list') {
                 var previousStack = stackedDataMap[stack];
-                if (previousStack) {
+                // Avoid conflict with Object.prototype
+                if (stackedDataMap.hasOwnProperty(stack) && previousStack) {
                     data.stackedOn = previousStack;
                 }
                 stackedDataMap[stack] = data;
@@ -1528,6 +1508,7 @@ define(function (require) {
     var idBase = new Date() - 0;
     var groupIdBase = new Date() - 0;
     var DOM_ATTRIBUTE_KEY = '_echarts_instance_';
+
     /**
      * @alias module:echarts
      */
@@ -1535,9 +1516,9 @@ define(function (require) {
         /**
          * @type {number}
          */
-        version: '3.5.4',
+        version: '3.6.2',
         dependencies: {
-            zrender: '3.4.4'
+            zrender: '3.5.2'
         }
     };
 
@@ -1604,9 +1585,21 @@ define(function (require) {
                     + echarts.dependencies.zrender + '+'
                 );
             }
+
             if (!dom) {
                 throw new Error('Initialize failed: invalid dom.');
             }
+        }
+
+        var existInstance = echarts.getInstanceByDom(dom);
+        if (existInstance) {
+            if (__DEV__) {
+                console.warn('There is a chart instance already initialized on the dom.');
+            }
+            return existInstance;
+        }
+
+        if (__DEV__) {
             if (zrUtil.isDom(dom)
                 && dom.nodeName.toUpperCase() !== 'CANVAS'
                 && (
@@ -1622,8 +1615,12 @@ define(function (require) {
         chart.id = 'ec_' + idBase++;
         instances[chart.id] = chart;
 
-        dom.setAttribute &&
+        if (dom.setAttribute) {
             dom.setAttribute(DOM_ATTRIBUTE_KEY, chart.id);
+        }
+        else {
+            dom[DOM_ATTRIBUTE_KEY] = chart.id;
+        }
 
         enableConnect(chart);
 
@@ -1671,11 +1668,12 @@ define(function (require) {
      * @param  {module:echarts~ECharts|HTMLDomElement|string} chart
      */
     echarts.dispose = function (chart) {
-        if (zrUtil.isDom(chart)) {
-            chart = echarts.getInstanceByDom(chart);
-        }
-        else if (typeof chart === 'string') {
+        if (typeof chart === 'string') {
             chart = instances[chart];
+        }
+        else if (!(chart instanceof ECharts)){
+            // Try to treat as dom
+            chart = echarts.getInstanceByDom(chart);
         }
         if ((chart instanceof ECharts) && !chart.isDisposed()) {
             chart.dispose();
@@ -1687,9 +1685,16 @@ define(function (require) {
      * @return {echarts~ECharts}
      */
     echarts.getInstanceByDom = function (dom) {
-        var key = dom.getAttribute(DOM_ATTRIBUTE_KEY);
+        var key;
+        if (dom.getAttribute) {
+            key = dom.getAttribute(DOM_ATTRIBUTE_KEY);
+        }
+        else {
+            key = dom[DOM_ATTRIBUTE_KEY];
+        }
         return instances[key];
     };
+
     /**
      * @param {string} key
      * @return {echarts~ECharts}
@@ -1787,6 +1792,20 @@ define(function (require) {
      */
     echarts.registerCoordinateSystem = function (type, CoordinateSystem) {
         CoordinateSystemManager.register(type, CoordinateSystem);
+    };
+
+    /**
+     * Get dimensions of specified coordinate system.
+     * @param {string} type
+     * @return {Array.<string|Object>}
+     */
+    echarts.getCoordinateSystemDimensions = function (type) {
+        var coordSysCreator = CoordinateSystemManager.get(type);
+        if (coordSysCreator) {
+            return coordSysCreator.getDimensionsInfo
+                    ? coordSysCreator.getDimensionsInfo()
+                    : coordSysCreator.dimensions.slice();
+        }
     };
 
     /**

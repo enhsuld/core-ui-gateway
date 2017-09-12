@@ -9,11 +9,10 @@ define(function (require) {
 
         type: 'series.scatter',
 
-        dependencies: ['grid', 'polar', 'geo', 'singleAxis'],
+        dependencies: ['grid', 'polar', 'geo', 'singleAxis', 'calendar'],
 
         getInitialData: function (option, ecModel) {
-            var list = createListFromArray(option.data, this, ecModel);
-            return list;
+            return createListFromArray(option.data, this, ecModel);
         },
 
         brushSelector: 'point',
@@ -42,6 +41,7 @@ define(function (require) {
             large: false,
             // Available when large is true
             largeThreshold: 2000,
+            // cursor: null,
 
             // label: {
                 // normal: {

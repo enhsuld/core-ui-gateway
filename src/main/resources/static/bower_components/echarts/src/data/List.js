@@ -31,7 +31,7 @@ define(function (require) {
         'stackedOn', 'hasItemOption', '_nameList', '_idList', '_rawData'
     ];
 
-    var transferProperties = function (a, b) {
+    function transferProperties(a, b) {
         zrUtil.each(TRANSFERABLE_PROPERTIES.concat(b.__wrappedMethods || []), function (propName) {
             if (b.hasOwnProperty(propName)) {
                 a[propName] = b[propName];
@@ -39,6 +39,19 @@ define(function (require) {
         });
 
         a.__wrappedMethods = b.__wrappedMethods;
+    }
+
+    function DefaultDataProvider(dataArray) {
+        this._array = dataArray || [];
+    }
+
+    DefaultDataProvider.prototype.pure = false;
+
+    DefaultDataProvider.prototype.count = function () {
+        return this._array.length;
+    };
+    DefaultDataProvider.prototype.getItem = function (idx) {
+        return this._array[idx];
     };
 
     /**
@@ -63,6 +76,8 @@ define(function (require) {
                 dimensionName = dimensions[i];
                 dimensionInfo = {
                     name: dimensionName,
+                    coordDim: dimensionName,
+                    coordDimIndex: 0,
                     stackable: false,
                     // Type can be 'float', 'int', 'number'
                     // Default is number, Precision of float may not enough
@@ -73,10 +88,16 @@ define(function (require) {
                 dimensionInfo = dimensions[i];
                 dimensionName = dimensionInfo.name;
                 dimensionInfo.type = dimensionInfo.type || 'number';
+                if (!dimensionInfo.coordDim) {
+                    dimensionInfo.coordDim = dimensionName;
+                    dimensionInfo.coordDimIndex = 0;
+                }
             }
+            dimensionInfo.otherDims = dimensionInfo.otherDims || {};
             dimensionNames.push(dimensionName);
             dimensionInfos[dimensionName] = dimensionInfo;
         }
+
         /**
          * @readOnly
          * @type {Array.<string>}
@@ -122,6 +143,7 @@ define(function (require) {
          * @type {Array.<string>}
          */
         this._idList = [];
+
         /**
          * Models of data option is stored sparse for optimizing memory cost
          * @type {Array.<module:echarts/model/Model>}
@@ -185,6 +207,7 @@ define(function (require) {
     var listProto = List.prototype;
 
     listProto.type = 'list';
+
     /**
      * If each data item has it's own option
      * @type {boolean}
@@ -204,6 +227,7 @@ define(function (require) {
         }
         return dim;
     };
+
     /**
      * Get type and stackable info of particular dimension
      * @param {string|number} dim
@@ -223,9 +247,13 @@ define(function (require) {
     listProto.initData = function (data, nameList, dimValueGetter) {
         data = data || [];
 
+        var isDataArray = zrUtil.isArray(data);
+        if (isDataArray) {
+            data = new DefaultDataProvider(data);
+        }
         if (__DEV__) {
-            if (!zrUtil.isArray(data)) {
-                throw new Error('Invalid data.');
+            if (!isDataArray && (typeof data.getItem != 'function' || typeof data.count != 'function')) {
+                throw new Error('Inavlid data provider.');
             }
         }
 
@@ -236,17 +264,20 @@ define(function (require) {
         var indices = this.indices = [];
 
         var dimensions = this.dimensions;
-        var size = data.length;
         var dimensionInfoMap = this._dimensionInfos;
+
+        var size = data.count();
 
         var idList = [];
         var nameRepeatCount = {};
+        var nameDimIdx;
 
         nameList = nameList || [];
 
         // Init storage
         for (var i = 0; i < dimensions.length; i++) {
             var dimInfo = dimensionInfoMap[dimensions[i]];
+            dimInfo.otherDims.itemName === 0 && (nameDimIdx = i);
             var DataCtor = dataCtors[dimInfo.type];
             storage[dimensions[i]] = new DataCtor(size);
         }
@@ -271,8 +302,9 @@ define(function (require) {
             );
         };
 
-        for (var idx = 0; idx < data.length; idx++) {
-            var dataItem = data[idx];
+        for (var i = 0; i < size; i++) {
+            // NOTICE: Try not to write things into dataItem
+            var dataItem = data.getItem(i);
             // Each data item is value
             // [1, 2]
             // 2
@@ -285,22 +317,26 @@ define(function (require) {
                 var dim = dimensions[k];
                 var dimStorage = storage[dim];
                 // PENDING NULL is empty or zero
-                dimStorage[idx] = dimValueGetter(dataItem, dim, idx, k);
+                dimStorage[i] = dimValueGetter(dataItem, dim, i, k);
             }
 
-            indices.push(idx);
+            indices.push(i);
         }
 
         // Use the name in option and create id
-        for (var i = 0; i < data.length; i++) {
-            if (!nameList[i]) {
-                if (data[i] && data[i].name != null) {
-                    nameList[i] = data[i].name;
+        for (var i = 0; i < size; i++) {
+            var dataItem = data.getItem(i);
+            if (!nameList[i] && dataItem) {
+                if (dataItem.name != null) {
+                    nameList[i] = dataItem.name;
+                }
+                else if (nameDimIdx != null) {
+                    nameList[i] = storage[dimensions[nameDimIdx]][i];
                 }
             }
             var name = nameList[i] || '';
             // Try using the id in option
-            var id = data[i] && data[i].id;
+            var id = dataItem && dataItem.id;
 
             if (!id && name) {
                 // Use name as id and add counter to avoid same name
@@ -337,11 +373,11 @@ define(function (require) {
         var dataIndex = this.indices[idx];
 
         // If value not exists
-        if (dataIndex == null) {
+        if (dataIndex == null || !storage[dim]) {
             return NaN;
         }
 
-        var value = storage[dim] && storage[dim][dataIndex];
+        var value = storage[dim][dataIndex];
         // FIXME ordinal data type is not stackable
         if (stack) {
             var dimensionInfo = this._dimensionInfos[dim];
@@ -598,7 +634,7 @@ define(function (require) {
      * @return {number}
      */
     listProto.getRawDataItem = function (idx) {
-        return this._rawData[this.getRawIndex(idx)];
+        return this._rawData.getItem(this.getRawIndex(idx));
     };
 
     /**
@@ -707,7 +743,10 @@ define(function (require) {
         for (var i = 0; i < indices.length; i++) {
             var keep;
             // Simple optimization
-            if (dimSize === 1) {
+            if (!dimSize) {
+                keep = cb.call(context, i);
+            }
+            else if (dimSize === 1) {
                 keep = cb.call(
                     context, this.get(dimensions[0], i, stack), i
                 );
@@ -882,7 +921,7 @@ define(function (require) {
     listProto.getItemModel = function (idx) {
         var hostModel = this.hostModel;
         idx = this.indices[idx];
-        return new Model(this._rawData[idx], hostModel, hostModel && hostModel.ecModel);
+        return new Model(this._rawData.getItem(idx), hostModel, hostModel && hostModel.ecModel);
     };
 
     /**
@@ -999,7 +1038,7 @@ define(function (require) {
      * Get visual property of single data item
      * @param {number} idx
      * @param {string} key
-     * @param {boolean} ignoreParent
+     * @param {boolean} [ignoreParent=false]
      */
     listProto.getItemVisual = function (idx, key, ignoreParent) {
         var itemVisual = this._itemVisuals[idx];

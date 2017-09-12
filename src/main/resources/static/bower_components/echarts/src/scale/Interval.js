@@ -47,9 +47,6 @@ define(function (require) {
          * Get interval
          */
         getInterval: function () {
-            if (!this._interval) {
-                this.niceTicks();
-            }
             return this._interval;
         },
 
@@ -61,15 +58,14 @@ define(function (require) {
             // Dropped auto calculated niceExtent and use user setted extent
             // We assume user wan't to set both interval, min, max to get a better result
             this._niceExtent = this._extent.slice();
+
+            this._intervalPrecision = helper.getIntervalPrecision(interval);
         },
 
         /**
          * @return {Array.<number>}
          */
         getTicks: function () {
-            if (!this._interval) {
-                this.niceTicks();
-            }
             return helper.intervalScaleGetTicks(
                 this._interval, this._extent, this._niceExtent, this._intervalPrecision
             );
@@ -120,8 +116,9 @@ define(function (require) {
          * Update interval and extent of intervals for nice ticks
          *
          * @param {number} [splitNumber = 5] Desired number of ticks
+         * @param {number} [minInterval]
          */
-        niceTicks: function (splitNumber) {
+        niceTicks: function (splitNumber, minInterval) {
             splitNumber = splitNumber || 5;
             var extent = this._extent;
             var span = extent[1] - extent[0];
@@ -135,7 +132,7 @@ define(function (require) {
                 extent.reverse();
             }
 
-            var result = helper.intervalScaleNiceTicks(extent, splitNumber);
+            var result = helper.intervalScaleNiceTicks(extent, splitNumber, minInterval);
 
             this._intervalPrecision = result.intervalPrecision;
             this._interval = result.interval;
@@ -144,11 +141,13 @@ define(function (require) {
 
         /**
          * Nice extent.
-         * @param {number} [splitNumber = 5] Given approx tick number
-         * @param {boolean} [fixMin=false]
-         * @param {boolean} [fixMax=false]
+         * @param {Object} opt
+         * @param {number} [opt.splitNumber = 5] Given approx tick number
+         * @param {boolean} [opt.fixMin=false]
+         * @param {boolean} [opt.fixMax=false]
+         * @param {boolean} [opt.minInterval=false]
          */
-        niceExtent: function (splitNumber, fixMin, fixMax) {
+        niceExtent: function (opt) {
             var extent = this._extent;
             // If extent start and end are same, expand them
             if (extent[0] === extent[1]) {
@@ -160,7 +159,7 @@ define(function (require) {
                     //      Plus data are all 100 and axis extent are [100, 100].
                     // Extend to the both side will cause expanded max is larger than fixed max.
                     // So only expand to the smaller side.
-                    if (!fixMax) {
+                    if (!opt.fixMax) {
                         extent[1] += expandSize / 2;
                         extent[0] -= expandSize / 2;
                     }
@@ -179,15 +178,15 @@ define(function (require) {
                 extent[1] = 1;
             }
 
-            this.niceTicks(splitNumber);
+            this.niceTicks(opt.splitNumber, opt.minInterval);
 
             // var extent = this._extent;
             var interval = this._interval;
 
-            if (!fixMin) {
+            if (!opt.fixMin) {
                 extent[0] = roundNumber(Math.floor(extent[0] / interval) * interval);
             }
-            if (!fixMax) {
+            if (!opt.fixMax) {
                 extent[1] = roundNumber(Math.ceil(extent[1] / interval) * interval);
             }
         }

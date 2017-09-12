@@ -84,9 +84,35 @@ define(function(require) {
                 normal: {
                     show: true,
                     position: 'inside', // Can be [5, '5%'] or position stirng like 'insideTopLeft', ...
+                    // formatter: null,
                     textStyle: {
                         color: '#fff',
                         ellipsis: true
+                        // align
+                        // baseline
+                    }
+                }
+            },
+            upperLabel: {                   // Label when node is parent.
+                normal: {
+                    show: false,
+                    position: [0, '50%'],
+                    height: 20,
+                    // formatter: null,
+                    textStyle: {
+                        color: '#fff',
+                        ellipsis: true,
+                        // align: null,
+                        baseline: 'middle'
+                    }
+                },
+                emphasis: {
+                    show: true,
+                    position: [0, '50%'],
+                    textStyle: {
+                        color: '#fff',
+                        ellipsis: true,
+                        baseline: 'middle'
                     }
                 }
             },
@@ -146,11 +172,8 @@ define(function(require) {
          * @override
          */
         getInitialData: function (option, ecModel) {
-            var rootName = option.name;
-            rootName == null && (rootName = option.name);
-
             // Create a virtual root.
-            var root = {name: rootName, children: option.data};
+            var root = {name: option.name, children: option.data};
 
             completeTreeValue(root);
 
@@ -237,7 +260,7 @@ define(function(require) {
             var idIndexMap = this._idIndexMap;
 
             if (!idIndexMap) {
-                idIndexMap = this._idIndexMap = {};
+                idIndexMap = this._idIndexMap = zrUtil.createHashMap();
                 /**
                  * @private
                  * @type {number}
@@ -245,9 +268,9 @@ define(function(require) {
                 this._idIndexMapCount = 0;
             }
 
-            var index = idIndexMap[id];
+            var index = idIndexMap.get(id);
             if (index == null) {
-                idIndexMap[id] = index = this._idIndexMapCount++;
+                idIndexMap.set(id, index = this._idIndexMapCount++);
             }
 
             return index;

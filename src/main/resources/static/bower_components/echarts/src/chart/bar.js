@@ -11,6 +11,7 @@ define(function (require) {
     var echarts = require('../echarts');
 
     echarts.registerLayout(zrUtil.curry(barLayoutGrid, 'bar'));
+
     // Visual coding for legend
     echarts.registerVisual(function (ecModel) {
         ecModel.eachSeriesByType('bar', function (seriesModel) {

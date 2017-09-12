@@ -15,7 +15,6 @@ angular
         	mainService.withdomain('get','/api/user')
 	  			.then(function(data){
 	  				 $rootScope.user =  data;
-	  				 console.log(data);
 	  				 $scope.user=data;	
 		  	});
         	 

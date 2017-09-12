@@ -7,33 +7,46 @@ altairApp
 
            $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
-         /*   $httpProvider.interceptors.push(['$q', '$location','$cookies', function($q, $location,$cookies) {
-
-                return {
-                    'request': function (config) {
-                        config.headers = config.headers || {};
-                        config.params = config.params || {};
-                        if ($cookies.get('access_token')) {
-                            config.headers.Authorization = 'Bearer ' + $cookies.get('access_token');
-                            if(config.url!='submenuTree'){
-                                config.params.access_token = $cookies.get('access_token');
-                            }
-
-                        }
-                        return config;
-                    },
-                    'responseError': function(response) {
-                        if(response.status === 401 || response.status === 403) {
-                            $location.path('/login');
-                        }
-                        return $q.reject(response);
-                    }
-                };
-            }]);
-*/
-
     	   $stateProvider
 
+               .state("restricted.inv", {
+                   url: "/inventory",
+                   template: '<div ui-view autoscroll="false" ng-class="{ \'uk-height-1-1\': page_full_height }"/>',
+                   abstract: true,
+                   ncyBreadcrumb: {
+                       label: 'Аудит'
+                   }
+               })
+
+
+               .state("restricted.inv.income", {
+                   url: "/income",
+                   templateUrl: 'app/custom/inventory/invincomeView.html',
+                   controller: 'invincomeCtrl',
+                   resolve: {
+                       deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                           return $ocLazyLoad.load(['lazy_KendoUI',
+                               'lazy_parsleyjs',
+                               'app/custom/inventory/invincomeController.js'
+                           ]);
+                       }],
+                       orgs: function($http,$state){
+                           return $http({ method: 'GET', url: '/api/core/resource/LutCmmOrganization' })
+                               .then(function (data) {
+                                   return data.data;
+                               })
+                               .catch(function(response) {
+                                   $state.go("login");
+                               });
+                       }
+                   },
+                   data: {
+                       pageTitle: 'Бараа материал'
+                   },
+                   ncyBreadcrumb: {
+                       label: 'Бараа материалын худалдан авалтын жагсаалт'
+                   }
+               })
                .state("restricted.pages.mgtsettings", {
                    url: "/settings/mgt",
                    templateUrl: 'app/custom/settings/mgtSettingsView.html',

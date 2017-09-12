@@ -7,6 +7,7 @@ define(function (require) {
     var symbolUtil = require('../../util/symbol');
     var graphic = require('../../util/graphic');
     var numberUtil = require('../../util/number');
+    var labelHelper = require('./labelHelper');
 
     function getSymbolSize(data, idx) {
         var symbolSize = data.getItemVisual(idx, 'symbolSize');
@@ -177,6 +178,7 @@ define(function (require) {
         var labelModel = seriesScope && seriesScope.labelModel;
         var hoverLabelModel = seriesScope && seriesScope.hoverLabelModel;
         var hoverAnimation = seriesScope && seriesScope.hoverAnimation;
+        var cursorStyle = seriesScope && seriesScope.cursorStyle;
 
         if (!seriesScope || data.hasItemOption) {
             var itemModel = data.getItemModel(idx);
@@ -192,6 +194,7 @@ define(function (require) {
             labelModel = itemModel.getModel(normalLabelAccessPath);
             hoverLabelModel = itemModel.getModel(emphasisLabelAccessPath);
             hoverAnimation = itemModel.getShallow('hoverAnimation');
+            cursorStyle = itemModel.getShallow('cursor');
         }
         else {
             hoverItemStyle = zrUtil.extend({}, hoverItemStyle);
@@ -208,6 +211,8 @@ define(function (require) {
             ]);
         }
 
+        cursorStyle && symbolPath.attr('cursor', cursorStyle);
+
         // PENDING setColor before setStyle!!!
         symbolPath.setColor(color);
 
@@ -218,37 +223,13 @@ define(function (require) {
             elStyle.opacity = opacity;
         }
 
-        // Get last value dim
-        var dimensions = data.dimensions.slice();
-        var valueDim;
-        var dataType;
-        while (dimensions.length && (
-            valueDim = dimensions.pop(),
-            dataType = data.getDimensionInfo(valueDim).type,
-            dataType === 'ordinal' || dataType === 'time'
-        )) {} // jshint ignore:line
-
-        if (valueDim != null && labelModel.getShallow('show')) {
-            graphic.setText(elStyle, labelModel, color);
-            elStyle.text = zrUtil.retrieve(
-                seriesModel.getFormattedLabel(idx, 'normal'),
-                data.get(valueDim, idx)
-            );
-        }
-        else {
-            elStyle.text = '';
-        }
-
-        if (valueDim != null && hoverLabelModel.getShallow('show')) {
-            graphic.setText(hoverItemStyle, hoverLabelModel, color);
-            hoverItemStyle.text = zrUtil.retrieve(
-                seriesModel.getFormattedLabel(idx, 'emphasis'),
-                data.get(valueDim, idx)
-            );
-        }
-        else {
-            hoverItemStyle.text = '';
-        }
+        var valueDim = labelHelper.findLabelValueDim(data);
+        labelHelper.setTextToStyle(
+            data, idx, valueDim, elStyle, seriesModel, labelModel, color
+        );
+        labelHelper.setTextToStyle(
+            data, idx, valueDim, hoverItemStyle, seriesModel, hoverLabelModel, color
+        );
 
         symbolPath.off('mouseover')
             .off('mouseout')

@@ -30,12 +30,18 @@ define(function(require) {
             xAxisIndex: null,       // Default the first horizontal category axis.
             yAxisIndex: null,       // Default the first vertical category axis.
 
-            filterMode: 'filter',   // Possible values: 'filter' or 'empty'.
-                                    // 'filter': data items which are out of window will be removed.
-                                    //           This option is applicable when filtering outliers.
+            filterMode: 'filter',   // Possible values: 'filter' or 'empty' or 'weakFilter'.
+                                    // 'filter': data items which are out of window will be removed. This option is
+                                    //          applicable when filtering outliers. For each data item, it will be
+                                    //          filtered if one of the relevant dimensions is out of the window.
+                                    // 'weakFilter': data items which are out of window will be removed. This option
+                                    //          is applicable when filtering outliers. For each data item, it will be
+                                    //          filtered only if all  of the relevant dimensions are out of the same
+                                    //          side of the window.
                                     // 'empty': data items which are out of window will be set to empty.
                                     //          This option is applicable when user should not neglect
                                     //          that there are some data items out of window.
+                                    // 'none': Do not filter.
                                     // Taking line chart as an example, line will be broken in
                                     // the filtered points when filterModel is set to 'empty', but
                                     // be connected when set to 'filter'.
@@ -47,7 +53,11 @@ define(function(require) {
             start: 0,               // Start percent. 0 ~ 100
             end: 100,               // End percent. 0 ~ 100
             startValue: null,       // Start value. If startValue specified, start is ignored.
-            endValue: null          // End value. If endValue specified, end is ignored.
+            endValue: null,         // End value. If endValue specified, end is ignored.
+            minSpan: null,          // 0 ~ 100
+            maxSpan: null,          // 0 ~ 100
+            minValueSpan: null,     // The range of dataZoom can not be smaller than that.
+            maxValueSpan: null      // The range of dataZoom can not be larger than that.
         },
 
         /**
@@ -469,9 +479,15 @@ define(function(require) {
 
         /**
          * @public
+         * @param {module:echarts/model/Model} [axisModel] If axisModel given, find axisProxy
+         *      corresponding to the axisModel
          * @return {module:echarts/component/dataZoom/AxisProxy}
          */
-        findRepresentativeAxisProxy: function () {
+        findRepresentativeAxisProxy: function (axisModel) {
+            if (axisModel) {
+                return axisModel.__dzAxisProxy;
+            }
+
             // Find the first hosted axisProxy
             var axisProxies = this._axisProxies;
             for (var key in axisProxies) {

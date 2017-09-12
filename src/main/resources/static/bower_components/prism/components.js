@@ -548,6 +548,11 @@ var components = {
 			"require": "javascript",
 			"owner": "vkbansal"
 		},
+		"vbnet": {
+			"title": "VB.Net",
+			"require": "basic",
+			"owner": "Bigsby"
+		},
 		"verilog": {
 			"title": "Verilog",
 			"owner": "a-rey"
@@ -589,7 +594,8 @@ var components = {
 		"wpd": "WebPlatform Docs",
 		"custom-class": {
 			"title": "Custom Class",
-			"owner": "dvkndn"
+			"owner": "dvkndn",
+			"noCSS": true
 		},
 		"file-highlight": {
 			"title": "File Highlight",

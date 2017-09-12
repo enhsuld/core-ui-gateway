@@ -114,14 +114,13 @@ altairApp
                     $rootScope.pageLoading = true;
                     $rootScope.pageLoaded = false;
                 }
-
             });
 
             // fastclick (eliminate the 300ms delay between a physical tap and the firing of a click event on mobile browsers)
             FastClick.attach(document.body);
 
             // get version from package.json
-            $http.get('./package.json').success(function(response) {
+            $http.get('./package.json').then(function onSuccess(response) {
                 $rootScope.appVer = response.version;
             });
 
@@ -249,32 +248,42 @@ angular.module("ConsoleLogger", [])
     .factory("PrintToConsole", ["$rootScope", function ($rootScope) {
         var handler = { active: false };
         handler.toggle = function () { handler.active = !handler.active; };
-        if (handler.active) {
-            $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
+        $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
+            if (handler.active) {
                 console.log("$stateChangeStart --- event, toState, toParams, fromState, fromParams");
                 console.log(arguments);
-            });
-            $rootScope.$on('$stateChangeError', function (event, toState, toParams, fromState, fromParams, error) {
+            };
+        });
+        $rootScope.$on('$stateChangeError', function (event, toState, toParams, fromState, fromParams, error) {
+            if (handler.active) {
                 console.log("$stateChangeError --- event, toState, toParams, fromState, fromParams, error");
                 console.log(arguments);
-            });
-            $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
+            };
+        });
+        $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
+            if (handler.active) {
                 console.log("$stateChangeSuccess --- event, toState, toParams, fromState, fromParams");
                 console.log(arguments);
-            });
-            $rootScope.$on('$viewContentLoading', function (event, viewConfig) {
+            };
+        });
+        $rootScope.$on('$viewContentLoading', function (event, viewConfig) {
+            if (handler.active) {
                 console.log("$viewContentLoading --- event, viewConfig");
                 console.log(arguments);
-            });
-            $rootScope.$on('$viewContentLoaded', function (event) {
+            };
+        });
+        $rootScope.$on('$viewContentLoaded', function (event) {
+            if (handler.active) {
                 console.log("$viewContentLoaded --- event");
                 console.log(arguments);
-            });
-            $rootScope.$on('$stateNotFound', function (event, unfoundState, fromState, fromParams) {
+            };
+        });
+        $rootScope.$on('$stateNotFound', function (event, unfoundState, fromState, fromParams) {
+            if (handler.active) {
                 console.log("$stateNotFound --- event, unfoundState, fromState, fromParams");
                 console.log(arguments);
-            });
-        };
+            };
+        })
         return handler;
     }]);
 altairApp
@@ -2257,7 +2266,10 @@ altairApp
     .config([
         '$stateProvider',
         '$urlRouterProvider',
-        function ($stateProvider, $urlRouterProvider) {
+        '$locationProvider',
+        function ($stateProvider, $urlRouterProvider, $locationProvider) {
+
+            $locationProvider.hashPrefix('');
 
             // Use $urlRouterProvider to configure any redirects (when) and invalid urls (otherwise).
             $urlRouterProvider
@@ -3081,6 +3093,21 @@ altairApp
                     template: '<div ui-view autoscroll="false"/>',
                     abstract: true
                 })
+                .state("restricted.ecommerce.payment_page", {
+                    url: "/payment_page",
+                    templateUrl: 'app/components/ecommerce/paymentView.html',
+                    controller: 'paymentCtrl',
+                    resolve: {
+                        deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                            return $ocLazyLoad.load([
+                                'app/components/ecommerce/paymentController.js'
+                            ]);
+                        }]
+                    },
+                    data: {
+                        pageTitle: 'Product Details'
+                    }
+                })
                 .state("restricted.ecommerce.product_details", {
                     url: "/product_details",
                     templateUrl: 'app/components/ecommerce/product_detailsView.html',
@@ -3248,6 +3275,22 @@ altairApp
                     },
                     data: {
                         pageTitle: 'Charts (echarts)'
+                    }
+                })
+                .state("restricted.plugins.crud_table", {
+                    url: "/crud_table",
+                    templateUrl: 'app/components/plugins/crud_tableView.html',
+                    controller: 'crud_tableCtrl',
+                    resolve: {
+                        deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                            return $ocLazyLoad.load([
+                                'lazy_masked_inputs',
+                                'app/components/plugins/crud_tableController.js'
+                            ], {serie: true});
+                        }]
+                    },
+                    data: {
+                        pageTitle: 'Context Menu'
                     }
                 })
                 .state("restricted.plugins.context_menu", {
@@ -3723,6 +3766,13 @@ altairApp
                     templateUrl: 'app/components/pages/pricing_tablesView.html',
                     data: {
                         pageTitle: 'Pricing Tables'
+                    }
+                })
+                .state("restricted.pages.pricing_tables_v2", {
+                    url: "/pricing_tables_v2",
+                    templateUrl: 'app/components/pages/pricing_tables_v2View.html',
+                    data: {
+                        pageTitle: 'Pricing Tables v2'
                     }
                 })
                 .state("restricted.pages.scrum_board", {
@@ -4288,7 +4338,7 @@ altairApp
                             <!-- jquery ui -->
                             'bower_components/jquery-ui/jquery-ui.min.js',
                             <!-- gantt chart -->
-                            'assets/js/custom/gantt_chart.js'
+                            'assets/js/custom/gantt_chart.min.js'
                         ],
                         serie: true
                     },

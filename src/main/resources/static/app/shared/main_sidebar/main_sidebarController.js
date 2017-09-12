@@ -28,7 +28,6 @@ angular
             });
 
             $scope.role = function(item){
-                console.log(item);
                 $rootScope.rupdate=item.update;
                 $rootScope.rcreate=item.create;
                 $rootScope.rdelete=item.delete;

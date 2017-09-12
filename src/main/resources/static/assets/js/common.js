@@ -18674,7 +18674,7 @@ https://github.com/imakewebthings/waypoints/blob/master/licenses.txt
 			} catch (e) { // Fails in IE < 9
 
 				// This will work for genuine arrays, array-like objects, 
-				// NamedNodeMap (attributes, models, notations),
+				// NamedNodeMap (attributes, entities, notations),
 				// NodeList (e.g., getElementsByTagName), HTMLCollection (e.g., childNodes),
 				// and will not fail on other DOM objects (as do DOM elements in IE < 9)
 				return function(begin, end) {
@@ -27169,12 +27169,13 @@ $special = $event.special.debouncedresize = {
 
 /*!
 * screenfull
-* v3.0.2 - 2017-03-13
+* v3.3.1 - 2017-07-07
 * (c) Sindre Sorhus; MIT License
 */
 (function () {
 	'use strict';
 
+	var document = typeof window !== 'undefined' && typeof window.document !== 'undefined' ? window.document : {};
 	var isCommonjs = typeof module !== 'undefined' && module.exports;
 	var keyboardAllowed = typeof Element !== 'undefined' && 'ALLOW_KEYBOARD_INPUT' in Element;
 
@@ -27190,7 +27191,7 @@ $special = $event.special.debouncedresize = {
 				'fullscreenchange',
 				'fullscreenerror'
 			],
-			// new WebKit
+			// New WebKit
 			[
 				'webkitRequestFullscreen',
 				'webkitExitFullscreen',
@@ -27200,7 +27201,7 @@ $special = $event.special.debouncedresize = {
 				'webkitfullscreenerror'
 
 			],
-			// old WebKit (Safari 5.1)
+			// Old WebKit (Safari 5.1)
 			[
 				'webkitRequestFullScreen',
 				'webkitCancelFullScreen',
@@ -27245,6 +27246,11 @@ $special = $event.special.debouncedresize = {
 		return false;
 	})();
 
+	var eventNameMap = {
+		change: fn.fullscreenchange,
+		error: fn.fullscreenerror
+	};
+
 	var screenfull = {
 		request: function (elem) {
 			var request = fn.requestFullscreen;
@@ -27272,10 +27278,22 @@ $special = $event.special.debouncedresize = {
 			}
 		},
 		onchange: function (callback) {
-			document.addEventListener(fn.fullscreenchange, callback, false);
+			this.on('change', callback);
 		},
 		onerror: function (callback) {
-			document.addEventListener(fn.fullscreenerror, callback, false);
+			this.on('error', callback);
+		},
+		on: function (event, callback) {
+			var eventName = eventNameMap[event];
+			if (eventName) {
+				document.addEventListener(eventName, callback, false);
+			}
+		},
+		off: function (event, callback) {
+			var eventName = eventNameMap[event];
+			if (eventName) {
+				document.removeEventListener(eventName, callback, false);
+			}
 		},
 		raw: fn
 	};

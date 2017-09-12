@@ -24,6 +24,7 @@
                 'echarts/chart/bar',
                 'echarts/chart/line',
                 'echarts/component/legend',
+                'echarts/component/graphic',
                 'echarts/component/grid',
                 'echarts/component/tooltip',
                 'echarts/component/toolbox',
@@ -172,12 +173,14 @@
                         type: 'bar',
                         stack: 'one',
                         itemStyle: itemStyle,
+                        cursor: 'move',
                         data: data1
                     }, {
                         name: 'bar2',
                         type: 'bar',
                         stack: 'one',
                         itemStyle: itemStyle,
+                        cursor: 'default',
                         data: data2
                     }, {
                         name: 'bar3',
@@ -196,6 +199,21 @@
 
                 chart.on('click', function (params) {
                     console.log(params);
+                });
+
+                chart.on('legendselectchanged', function (params) {
+                    chart.setOption({
+                        // title: {
+                        // },
+                        graphic: [{
+                            type: 'circle',
+                            shape: {
+                                cx: 100,
+                                cy: 100,
+                                r: 20,
+                            }
+                        }]
+                    });
                 });
 
                 window.onresize = chart.resize;

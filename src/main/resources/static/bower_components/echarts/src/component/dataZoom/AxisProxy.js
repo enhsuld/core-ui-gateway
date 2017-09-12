@@ -50,6 +50,13 @@ define(function(require) {
         this._dataExtent;
 
         /**
+         * {minSpan, maxSpan, minValueSpan, maxValueSpan}
+         * @private
+         * @type {Object}
+         */
+        this._minMaxSpan;
+
+        /**
          * @readOnly
          * @type {module: echarts/model/Global}
          */
@@ -147,6 +154,10 @@ define(function(require) {
             return foundOtherAxisModel;
         },
 
+        getMinMaxSpan: function () {
+            return zrUtil.clone(this._minMaxSpan);
+        },
+
         /**
          * Only calculate by given range and this._dataExtent, do not change anything.
          *
@@ -241,6 +252,8 @@ define(function(require) {
             this._valueWindow = dataWindow.valueWindow;
             this._percentWindow = dataWindow.percentWindow;
 
+            setMinMaxSpan(this);
+
             // Update axis setting then.
             setAxisModel(this);
         },
@@ -270,6 +283,10 @@ define(function(require) {
             var filterMode = dataZoomModel.get('filterMode');
             var valueWindow = this._valueWindow;
 
+            if (filterMode === 'none') {
+                return;
+            }
+
             // FIXME
             // Toolbox may has dataZoom injected. And if there are stacked bar chart
             // with NaN data, NaN will be filtered and stack will be wrong.
@@ -289,19 +306,43 @@ define(function(require) {
             // Process series data
             each(seriesModels, function (seriesModel) {
                 var seriesData = seriesModel.getData();
+                var dataDims = seriesModel.coordDimToDataDim(axisDim);
 
-                seriesData && each(seriesModel.coordDimToDataDim(axisDim), function (dim) {
-                    if (filterMode === 'empty') {
-                        seriesModel.setData(
-                            seriesData.map(dim, function (value) {
-                                return !isInWindow(value) ? NaN : value;
-                            })
-                        );
-                    }
-                    else {
-                        seriesData.filterSelf(dim, isInWindow);
-                    }
-                });
+                if (filterMode === 'weakFilter') {
+                    seriesData && seriesData.filterSelf(function (dataIndex) {
+                        var leftOut;
+                        var rightOut;
+                        var hasValue;
+                        for (var i = 0; i < dataDims.length; i++) {
+                            var value = seriesData.get(dataDims[i], dataIndex);
+                            var thisHasValue = !isNaN(value);
+                            var thisLeftOut = value < valueWindow[0];
+                            var thisRightOut = value > valueWindow[1];
+                            if (thisHasValue && !thisLeftOut && !thisRightOut) {
+                                return true;
+                            }
+                            thisHasValue && (hasValue = true);
+                            thisLeftOut && (leftOut = true);
+                            thisRightOut && (rightOut = true);
+                        }
+                        // If both left out and right out, do not filter.
+                        return hasValue && leftOut && rightOut;
+                    });
+                }
+                else {
+                    seriesData && each(dataDims, function (dim) {
+                        if (filterMode === 'empty') {
+                            seriesModel.setData(
+                                seriesData.map(dim, function (value) {
+                                    return !isInWindow(value) ? NaN : value;
+                                })
+                            );
+                        }
+                        else {
+                            seriesData.filterSelf(dim, isInWindow);
+                        }
+                    });
+                }
             });
 
             function isInWindow(value) {
@@ -398,6 +439,28 @@ define(function(require) {
             useOrigin ? null : +valueWindow[0].toFixed(precision),
             useOrigin ? null : +valueWindow[1].toFixed(precision)
         );
+    }
+
+    function setMinMaxSpan(axisProxy) {
+        var minMaxSpan = axisProxy._minMaxSpan = {};
+        var dataZoomModel = axisProxy._dataZoomModel;
+
+        each(['min', 'max'], function (minMax) {
+            minMaxSpan[minMax + 'Span'] = dataZoomModel.get(minMax + 'Span');
+
+            // minValueSpan and maxValueSpan has higher priority than minSpan and maxSpan
+            var valueSpan = dataZoomModel.get(minMax + 'ValueSpan');
+            if (valueSpan != null) {
+                minMaxSpan[minMax + 'ValueSpan'] = valueSpan;
+
+                valueSpan = axisProxy.getAxisModel().axis.scale.parse(valueSpan);
+                if (valueSpan != null) {
+                    minMaxSpan[minMax + 'Span'] = numberUtil.linearMap(
+                        valueSpan, axisProxy._dataExtent, [0, 100], true
+                    );
+                }
+            }
+        });
     }
 
     return AxisProxy;

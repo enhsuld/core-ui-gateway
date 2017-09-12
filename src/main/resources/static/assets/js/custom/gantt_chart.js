@@ -473,14 +473,12 @@
         }
 
         function bindBlockClick(div, callback) {
-            console.log('1');
             jQuery("div.ganttview-block", div).on("click", function () {
                 if (callback) { callback(jQuery(this).data("block-data")); }
             });
         }
 
         function bindBlockResize(div, cellWidth, startDate, callback) {
-            console.log('2');
             jQuery("div.ganttview-block", div).resizable({
                 grid: cellWidth,
                 handles: "e,w",
