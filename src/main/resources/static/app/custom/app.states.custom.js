@@ -51,10 +51,10 @@ altairApp
                        label: 'Бараа материалын худалдан авалтын жагсаалт'
                    }
                })
-               .state("restricted.inv.income", {
-                   url: "/income",
-                   templateUrl: 'app/custom/inventory/invincomeView.html',
-                   controller: 'invincomeCtrl',
+               .state("restricted.inv.newincome", {
+                   url: "/income/add",
+                   templateUrl: 'app/custom/inventory/invNewIncomeView.html',
+                   controller: 'newincomeCtrl',
                    resolve: {
                        deps: ['$ocLazyLoad', function($ocLazyLoad) {
                            return $ocLazyLoad.load([
@@ -63,7 +63,7 @@ altairApp
                                'lazy_ionRangeSlider',
                                'lazy_masked_inputs',
                                'lazy_character_counter',
-                               'app/custom/inventory/invincomeController.js'
+                               'app/custom/inventory/invNewIncomeController.js'
                            ]);
                        }],
                        orgs: function($http,$state){
@@ -77,10 +77,10 @@ altairApp
                        }
                    },
                    data: {
-                       pageTitle: 'Бараа материал'
+                       pageTitle: 'Бараа материал нэмэх'
                    },
                    ncyBreadcrumb: {
-                       label: 'Бараа материалын худалдан авалтын жагсаалт'
+                       label: 'Худалдан авалт'
                    }
                })
                .state("restricted.pages.mgtsettings", {
