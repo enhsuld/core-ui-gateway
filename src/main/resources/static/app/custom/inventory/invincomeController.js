@@ -52,12 +52,25 @@ angular
                     }
                 });
 
+                $scope.tr={
+                    receipttype:1
+                }
+
+
                 $("#hariltsagch").kendoComboBox({
                     filter: "startswith",
                     dataTextField: "ProductName",
                     dataValueField: "ProductID",
                     dataSource: dataSource,
                     noDataTemplate: $("#noDataTemplate").html()
+                });
+
+                $("#bairshil").kendoComboBox({
+                    filter: "startswith",
+                    dataTextField: "ProductName",
+                    dataValueField: "ProductID",
+                    dataSource: dataSource,
+                    noDataTemplate: $("#noDataLocationTemplate").html()
                 });
 
                 $scope.selectize_a_data = {

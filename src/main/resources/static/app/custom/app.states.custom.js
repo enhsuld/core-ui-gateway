@@ -51,6 +51,38 @@ altairApp
                        label: 'Бараа материалын худалдан авалтын жагсаалт'
                    }
                })
+               .state("restricted.inv.income", {
+                   url: "/income",
+                   templateUrl: 'app/custom/inventory/invincomeView.html',
+                   controller: 'invincomeCtrl',
+                   resolve: {
+                       deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                           return $ocLazyLoad.load([
+                               'lazy_KendoUI',
+                               'lazy_parsleyjs',
+                               'lazy_ionRangeSlider',
+                               'lazy_masked_inputs',
+                               'lazy_character_counter',
+                               'app/custom/inventory/invincomeController.js'
+                           ]);
+                       }],
+                       orgs: function($http,$state){
+                           return $http({ method: 'GET', url: '/api/core/resource/LutCmmOrganization' })
+                               .then(function (data) {
+                                   return data.data;
+                               })
+                               .catch(function(response) {
+                                   $state.go("login");
+                               });
+                       }
+                   },
+                   data: {
+                       pageTitle: 'Бараа материал'
+                   },
+                   ncyBreadcrumb: {
+                       label: 'Бараа материалын худалдан авалтын жагсаалт'
+                   }
+               })
                .state("restricted.pages.mgtsettings", {
                    url: "/settings/mgt",
                    templateUrl: 'app/custom/settings/mgtSettingsView.html',
