@@ -1,11 +1,11 @@
 /*
-*  Altair Admin AngularJS
-*  directives
-*/
+ *  Altair Admin AngularJS
+ *  directives
+ */
 ;'use strict';
 
 altairApp
-    // page title
+// page title
     .directive('pageTitle', [
         '$rootScope',
         '$timeout',
@@ -499,7 +499,7 @@ altairApp
                                     $body.addClass('sidebar_slim_inactive');
                                     $body.removeClass('sidebar_slim_active');
                                 })
-                       }
+                        }
                     });
 
                 }
@@ -747,7 +747,7 @@ altairApp
                             mdCardToolbarFixed = $thisCard.hasClass('toolbar-fixed');
 
                         $thisCard
-                            // resize card to original size
+                        // resize card to original size
                             .velocity({
                                 height: mdPlaceholderCard_h,
                                 width: mdPlaceholderCard_w
@@ -1182,7 +1182,7 @@ altairApp
                     });
 
                     scope.$watch(function() {
-                        return $elem.attr('class'); },
+                            return $elem.attr('class'); },
                         function(newValue,oldValue){
                             if(newValue != oldValue) {
                                 scope.updateInput();
@@ -1191,7 +1191,7 @@ altairApp
                     );
 
                     scope.$watch(function() {
-                        return $elem.val(); },
+                            return $elem.val(); },
                         function(newValue,oldValue){
                             if( !$elem.is(':focus') && (newValue != oldValue) ) {
                                 scope.updateInput();
@@ -1299,39 +1299,39 @@ altairApp
                             });
                     }
                     /*$(elem)
-                        .append('<i class="material-icons md-fab-action-close" style="display:none">&#xE5CD;</i>')
-                        .on('click',function(e) {
-                            e.preventDefault();
+                     .append('<i class="material-icons md-fab-action-close" style="display:none">&#xE5CD;</i>')
+                     .on('click',function(e) {
+                     e.preventDefault();
 
-                            var $this = $(this),
-                                $this_wrapper = $this.closest('.md-fab-wrapper');
+                     var $this = $(this),
+                     $this_wrapper = $this.closest('.md-fab-wrapper');
 
-                            if(!$this_wrapper.hasClass('md-fab-active')) {
-                                $this_wrapper.addClass('md-fab-active');
-                            } else {
-                                $this_wrapper.removeClass('md-fab-active');
-                            }
+                     if(!$this_wrapper.hasClass('md-fab-active')) {
+                     $this_wrapper.addClass('md-fab-active');
+                     } else {
+                     $this_wrapper.removeClass('md-fab-active');
+                     }
 
-                            $this.velocity({
-                                scale: 0
-                            },{
-                                duration: 140,
-                                easing: variables.easing_swiftOut,
-                                complete: function() {
-                                    $this.children().toggle();
-                                    $this.velocity({
-                                        scale: 1
-                                    },{
-                                        duration: 140,
-                                        easing: variables.easing_swiftOut
-                                    })
-                                }
-                            })
-                        })
-                        .closest('.md-fab-wrapper').find('.md-fab-small')
-                        .on('click',function() {
-                            $(elem).trigger('click');
-                        });*/
+                     $this.velocity({
+                     scale: 0
+                     },{
+                     duration: 140,
+                     easing: variables.easing_swiftOut,
+                     complete: function() {
+                     $this.children().toggle();
+                     $this.velocity({
+                     scale: 1
+                     },{
+                     duration: 140,
+                     easing: variables.easing_swiftOut
+                     })
+                     }
+                     })
+                     })
+                     .closest('.md-fab-wrapper').find('.md-fab-small')
+                     .on('click',function() {
+                     $(elem).trigger('click');
+                     });*/
                 }
             }
         }
@@ -1489,15 +1489,15 @@ altairApp
                     };
 
                     $rootScope.$watch('pageLoaded',function() {
-                       if($rootScope.pageLoaded) {
-                           var children = parent_el.children(),
-                               children_length = children.length;
+                        if($rootScope.pageLoaded) {
+                            var children = parent_el.children(),
+                                children_length = children.length;
 
-                           $timeout(function() {
-                               add_animation(children,children_length)
-                           },560)
+                            $timeout(function() {
+                                add_animation(children,children_length)
+                            },560)
 
-                       }
+                        }
                     });
 
                     scope.$watch(function() {

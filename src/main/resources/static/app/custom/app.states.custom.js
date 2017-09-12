@@ -25,8 +25,12 @@ altairApp
                    controller: 'invincomeCtrl',
                    resolve: {
                        deps: ['$ocLazyLoad', function($ocLazyLoad) {
-                           return $ocLazyLoad.load(['lazy_KendoUI',
+                           return $ocLazyLoad.load([
+                               'lazy_KendoUI',
                                'lazy_parsleyjs',
+                               'lazy_ionRangeSlider',
+                               'lazy_masked_inputs',
+                               'lazy_character_counter',
                                'app/custom/inventory/invincomeController.js'
                            ]);
                        }],

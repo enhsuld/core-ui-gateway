@@ -5,16 +5,16 @@
 	height:auto !important;
 }
 .top_bar_active{
-	padding-top: 48px !important; 
+/* padding-top: 48px !important;*/
 }
 .k-filtercell>span {
-    padding-right: 2.857em !important;
+padding-right: 2.857em !important;
 }
 .k-filtercell>span>.k-button {
-    display: none !important;
+display: none !important;
 }
 .k-filter-row .k-dropdown-operator {
-    right: 0px !important;
+right: 0px !important;
 }
 /* cyrillic-ext */
 @font-face {

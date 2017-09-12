@@ -12,9 +12,115 @@ angular
                     $rootScope.toBarActive = false;
                 });
 
+
+                $scope.productsDataSource = {
+                    type: "odata",
+                    serverFiltering: true,
+                    transport: {
+                        read: {
+                            url: "https://demos.telerik.com/kendo-ui/service/Northwind.svc/Products",
+                        }
+                    }
+                };
+
+                var crudServiceBaseUrl = "https://demos.telerik.com/kendo-ui/service";
+                var dataSource = new kendo.data.DataSource({
+                    batch: true,
+                    transport: {
+                        read:  {
+                            url: crudServiceBaseUrl + "/Products",
+                            dataType: "jsonp"
+                        },
+                        create: {
+                            url: crudServiceBaseUrl + "/Products/Create",
+                            dataType: "jsonp"
+                        },
+                        parameterMap: function(options, operation) {
+                            if (operation !== "read" && options.models) {
+                                return {models: kendo.stringify(options.models)};
+                            }
+                        }
+                    },
+                    schema: {
+                        model: {
+                            id: "ProductID",
+                            fields: {
+                                ProductID: { type: "number" },
+                                ProductName: { type: "string" }
+                            }
+                        }
+                    }
+                });
+
+                $("#hariltsagch").kendoComboBox({
+                    filter: "startswith",
+                    dataTextField: "ProductName",
+                    dataValueField: "ProductID",
+                    dataSource: dataSource,
+                    noDataTemplate: $("#noDataTemplate").html()
+                });
+
+                $scope.selectize_a_data = {
+                    options: [
+                        {
+                            id: 1,
+                            title: "Автомат",
+                            value: "1"
+                        },
+                        {
+                            id: 2,
+                            title: "Гараар",
+                            value: "2"
+                        }
+                    ]
+                };
+
+                $scope.selectize_a_config = {
+                    plugins: {
+                        'disable_options': {
+                            disableOptions: ["c1","c2"]
+                        }
+                    },
+                    create: false,
+                    maxItems: 1,
+                    placeholder: 'Сонгох...',
+                    valueField: 'value',
+                    labelField: 'title',
+                    searchField: 'title'
+                };
+
+                $scope.selectize_c_options = ["Item A", "Item B", "Item C"];
+
+                $scope.selectize_c_config = {
+                    plugins: {
+                        'tooltip': ''
+                    },
+                    create: false,
+                    maxItems: 1,
+                    placeholder: 'Банк...'
+                };
+
+                var modal_inventory = UIkit.modal("#modal_inventory");
                 $scope.inventory = function(){
-                    alert();
+                    modal_inventory.show();
                 }
+
+                var $maskedInput = $('.masked_input');
+                if($maskedInput.length) {
+                    $maskedInput.inputmask();
+                }
+
+                var $formValidate = $('#form_val');
+                $formValidate
+				.parsley()
+				.on('form:validated',function() {
+					$scope.$apply();
+				})
+				.on('field:validated',function(parsleyField) {
+					if($(parsleyField.$element).hasClass('md-input')) {
+						$scope.$apply();
+					}
+				});
 
 				$scope.pmenuGrid = {
 					dataSource: {
@@ -183,7 +289,7 @@ angular
                 }
 			}
 			if($rootScope.ruptype==4){
-				$scope.pmenuGrid.toolbar= kendo.template($("#add").html());
+			//	$scope.pmenuGrid.toolbar= kendo.template($("#add").html());
 				$scope.pmenuGrid.editable="popup";
 				$scope.pmenuGrid.columns.push({template: kendo.template($("#update").html()), width: "200px"});
 			}

@@ -28,10 +28,6 @@ altairApp.config(function($sceDelegateProvider) {
         'https://w.soundcloud.com/**'
     ]);
 });
-/*
-altairApp.config(function(cfpLoadingBarProvider) {
-    cfpLoadingBarProvider.includeSpinner = true;
-  });*/
 
 // breadcrumbs
 altairApp.config(function($breadcrumbProvider) {
@@ -44,7 +40,6 @@ altairApp.config(function($breadcrumbProvider) {
 /* detect IE */
 function detectIE(){var a=window.navigator.userAgent,b=a.indexOf("MSIE ");if(0<b)return parseInt(a.substring(b+5,a.indexOf(".",b)),10);if(0<a.indexOf("Trident/"))return b=a.indexOf("rv:"),parseInt(a.substring(b+3,a.indexOf(".",b)),10);b=a.indexOf("Edge/");return 0<b?parseInt(a.substring(b+5,a.indexOf(".",b)),10):!1};
 
-
 altairApp.run(['$rootScope', '$injector','$cookies', function($rootScope,$injector,$cookies) {
     $injector.get("$http").defaults.transformRequest = function(data, headersGetter) {
         if ($rootScope.oauth) headersGetter()['Authorization'] = "Bearer "+ $cookies.get('access_token');
@@ -53,6 +48,7 @@ altairApp.run(['$rootScope', '$injector','$cookies', function($rootScope,$inject
         }
     };
 }]);
+
 
 /* Run Block */
 altairApp
@@ -69,8 +65,6 @@ altairApp
 
             $rootScope.$state = $state;
             $rootScope.$stateParams = $stateParams;
-
-
 
             $rootScope.$on('$stateChangeSuccess', function () {
 
@@ -133,14 +127,13 @@ altairApp
                     $rootScope.pageLoading = true;
                     $rootScope.pageLoaded = false;
                 }
-
             });
 
             // fastclick (eliminate the 300ms delay between a physical tap and the firing of a click event on mobile browsers)
             FastClick.attach(document.body);
 
             // get version from package.json
-            $http.get('./package.json').success(function(response) {
+            $http.get('./package.json').then(function onSuccess(response) {
                 $rootScope.appVer = response.version;
             });
 
@@ -162,9 +155,6 @@ altairApp
 
             // wave effects
             $window.Waves.init();
-            
-            
-            $rootScope.menuAccordionMode = true;
 
         }
     ])

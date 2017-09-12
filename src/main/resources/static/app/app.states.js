@@ -2,15 +2,18 @@ altairApp
     .config([
         '$stateProvider',
         '$urlRouterProvider',
+        '$locationProvider',
         '$httpProvider',
-        function ($stateProvider, $urlRouterProvider,$httpProvider) {
+        function ($stateProvider, $urlRouterProvider, $locationProvider,$httpProvider) {
 
             $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
 
+            $locationProvider.hashPrefix('');
+
             // Use $urlRouterProvider to configure any redirects (when) and invalid urls (otherwise).
             $urlRouterProvider
-	            .when('/dashboard', '/')
-	            .otherwise('/login');
+                .when('/dashboard', '/')
+                .otherwise('/');
 
             $stateProvider
             // -- ERROR PAGES --
@@ -33,7 +36,6 @@ altairApp
                     url: "/500",
                     templateUrl: 'app/components/pages/error_500View.html'
                 })
-   
                 // -- LOGIN PAGE --
                 .state("login", {
                     url: "/login",
@@ -50,23 +52,11 @@ altairApp
                         }]
                     }
                 })
-            // -- RESTRICTED --
+                // -- RESTRICTED --
                 .state("restricted", {
                     abstract: true,
                     url: "",
-                    views: {
-                        'main_header': {
-                            templateUrl: 'app/shared/header/headerView.html',
-                            controller: 'main_headerCtrl'
-                        },
-                        'main_sidebar': {
-                            templateUrl: 'app/shared/main_sidebar/main_sidebarView.html',
-                            controller: 'main_sidebarCtrl'
-                        },
-                        '': {
-                            templateUrl: 'app/views/restricted.html'
-                        }
-                    },
+                    templateUrl: 'app/views/restricted.html',
                     resolve: {
                         deps: ['$ocLazyLoad', function($ocLazyLoad) {
                             return $ocLazyLoad.load([
@@ -76,22 +66,12 @@ altairApp
                                 'lazy_prismJS',
                                 'lazy_autosize',
                                 'lazy_iCheck',
-                                'lazy_themes',
-                                'app/shared/main_sidebar/main_sidebarController.js',
+                                'lazy_themes'
                             ]);
-                        }],
-						/*user_data: function($http,$state){
-                    		return $http({ method: 'GET', url: '/api/user'})
-                            .then(function (data) {
-                                return data.data;
-                            })
-                            .catch(function(response) {
-							    $state.go("login");
-							});
-						},*/
+                        }]
                     }
                 })
-            // -- DASHBOARD --
+                // -- DASHBOARD --
                 .state("restricted.dashboard", {
                     url: "/",
                     templateUrl: 'app/components/dashboard/dashboardView.html',
@@ -294,7 +274,7 @@ altairApp
                     }
                 })
 
-            // -- LAYOUT --
+                // -- LAYOUT --
                 .state("restricted.layout", {
                     url: "/layout",
                     template: '<div ui-view autoscroll="false"/>',
@@ -327,7 +307,7 @@ altairApp
                     }
                 })
 
-            // -- KENDO UI --
+                // -- KENDO UI --
                 .state("restricted.kendoui", {
                     url: "/kendoui",
                     template: '<div ui-view autoscroll="false"/>',
@@ -515,7 +495,7 @@ altairApp
                         pageTitle: 'Window (kendoUI)'
                     }
                 })
-            // -- COMPONENTS --
+                // -- COMPONENTS --
                 .state("restricted.components", {
                     url: "/components",
                     template: '<div ui-view autoscroll="false" ng-class="{ \'uk-height-1-1\': page_full_height }"/>',
@@ -577,8 +557,7 @@ altairApp
                     },
                     ncyBreadcrumb: {
                         label: 'Breadcrumbs'
-                    }                
-                })
+                    }                })
                 .state("restricted.components.buttons", {
                     url: "/buttons",
                     templateUrl: 'app/components/components/buttonsView.html',
@@ -848,11 +827,26 @@ altairApp
                         pageTitle: 'Typography (components)'
                     }
                 })
-            // -- E-COMMERCE --
+                // -- E-COMMERCE --
                 .state("restricted.ecommerce", {
                     url: "/ecommerce",
                     template: '<div ui-view autoscroll="false"/>',
                     abstract: true
+                })
+                .state("restricted.ecommerce.payment_page", {
+                    url: "/payment_page",
+                    templateUrl: 'app/components/ecommerce/paymentView.html',
+                    controller: 'paymentCtrl',
+                    resolve: {
+                        deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                            return $ocLazyLoad.load([
+                                'app/components/ecommerce/paymentController.js'
+                            ]);
+                        }]
+                    },
+                    data: {
+                        pageTitle: 'Product Details'
+                    }
                 })
                 .state("restricted.ecommerce.product_details", {
                     url: "/product_details",
@@ -927,7 +921,7 @@ altairApp
                         pageTitle: 'Products Grid'
                     }
                 })
-            // -- PLUGINS --
+                // -- PLUGINS --
                 .state("restricted.plugins", {
                     url: "/plugins",
                     template: '<div ui-view autoscroll="false"/>',
@@ -1021,6 +1015,22 @@ altairApp
                     },
                     data: {
                         pageTitle: 'Charts (echarts)'
+                    }
+                })
+                .state("restricted.plugins.crud_table", {
+                    url: "/crud_table",
+                    templateUrl: 'app/components/plugins/crud_tableView.html',
+                    controller: 'crud_tableCtrl',
+                    resolve: {
+                        deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                            return $ocLazyLoad.load([
+                                'lazy_masked_inputs',
+                                'app/components/plugins/crud_tableController.js'
+                            ], {serie: true});
+                        }]
+                    },
+                    data: {
+                        pageTitle: 'Context Menu'
                     }
                 })
                 .state("restricted.plugins.context_menu", {
@@ -1240,7 +1250,7 @@ altairApp
                     }
                 })
 
-            // -- PAGES --
+                // -- PAGES --
                 .state("restricted.pages", {
                     url: "/pages",
                     template: '<div ui-view autoscroll="false" ng-class="{ \'uk-height-1-1\': page_full_height }" />',
@@ -1496,6 +1506,13 @@ altairApp
                     templateUrl: 'app/components/pages/pricing_tablesView.html',
                     data: {
                         pageTitle: 'Pricing Tables'
+                    }
+                })
+                .state("restricted.pages.pricing_tables_v2", {
+                    url: "/pricing_tables_v2",
+                    templateUrl: 'app/components/pages/pricing_tables_v2View.html',
+                    data: {
+                        pageTitle: 'Pricing Tables v2'
                     }
                 })
                 .state("restricted.pages.scrum_board", {
