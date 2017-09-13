@@ -54,49 +54,50 @@ angular
                     });
                 }
 
-
-                var crudServiceBaseUrl = "//demos.telerik.com/kendo-ui/service";
                 $scope.productsDataSource = {
                     batch: true,
                     transport: {
                         read:  {
-                            url: crudServiceBaseUrl + "/Products",
-                            dataType: "jsonp"
-                        },
-                        create: {
-                            url: crudServiceBaseUrl + "/Products/Create",
+                            url: "/api/core/list/LutMenu?access_token="+$cookies.get('access_token'),
                             dataType: "jsonp"
                         },
                         parameterMap: function(options, operation) {
                             if (operation !== "read" && options.models) {
                                 return {models: kendo.stringify(options.models)};
                             }
-                        }
-                    },
-                    schema: {
-                        model: {
-                            id: "ProductID",
-                            fields: {
-                                ProductID: { type: "number" },
-                                ProductName: { type: "string" }
+                        },
+                        schema: {
+                            data:"data",
+                            total:"total",
+                            model: {
+                                id: "id",
+                                fields: {
+                                    id: { editable: false,nullable: true},
+                                    code: { type: "string", validation: { required: true } },
+                                    orgid: { type: "number", validation: { required: true } },
+                                    mean: { type: "string",validation: { required: true } },
+                                }
                             }
-                        }
+                        },
+                        pageSize: 8,
                     }
                 }
+
+                console.log($scope.productsDataSource);
 
                 $scope.customerOptions = {
                     filter: "startswith",
                     dataSource: $scope.productsDataSource,
-                    dataTextField: "ProductName",
-                    dataValueField: "ProductID",
+                    dataTextField: "id",
+                    dataValueField: "menuname",
                     optionLabel: "Харилцагч...",
                     noDataTemplate: $("#noDataCustomerTemplate").html()
                 };
                 $scope.locationOptions = {
                     filter: "startswith",
                     dataSource: $scope.productsDataSource,
-                    dataTextField: "ProductName",
-                    dataValueField: "ProductID",
+                    dataTextField: "text",
+                    dataValueField: "value",
                     optionLabel: "Байршил...",
                     noDataTemplate: $("#noDataLocationTemplate").html()
                 };
