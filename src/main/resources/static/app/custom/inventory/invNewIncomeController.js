@@ -4,7 +4,7 @@ angular
 	        function ($scope,$rootScope,orgs,mainService,$state,sweet,$cookies) {
 	    		var aj=[{"text":"ROOT","value":"null"}];
                 var forumType=[{"text":"inline","value":1},{"text":"pop-up","value":2},{"text":"batch","value":3},{"text":"custom","value":4}];
-                $scope.domain="com.macro.dev.models.SettingsMean.";
+                $scope.domain="com.macro.dev.models.EgJournalInvDetail.";
                 $scope.domainLocation="com.macro.dev.models.SettingsMean.";
                 $scope.domainCustomer="com.macro.dev.models.SettingsMean.";
 
@@ -185,10 +185,10 @@ angular
 
 				$scope.pmenuGrid = {
 					dataSource: {
-
+                        autoSync:true,
 						transport: {
 							read:  {
-								url: "/api/core/list/SettingsMean?access_token="+$cookies.get('access_token'),
+								url: "/api/core/list/EgJournalInvDetail?access_token="+$cookies.get('access_token'),
 								data: {"sort":[{field: 'id', dir: 'asc'}]},
 								type: 'GET',
 								dataType: "json"
@@ -226,13 +226,20 @@ angular
 								 id: "id",
 								 fields: {
 									 id: { editable: false,nullable: true},
-                                     code: { type: "string", validation: { required: true } },
-									 orgid: { type: "number", validation: { required: true } },
-									 mean: { type: "string",validation: { required: true } },
+                                     invId: { type: "number", validation: { required: true } },
+                                     invName: { type: "string",editable:false, validation: { required: true } },
+                                     measName: { type: "string",editable:false, validation: { required: true } },
+                                     measId: { type: "number",editable:false, validation: { required: true } },
+                                     invCount: { type: "number",defaultValue:1, validation: { required: true } },
+                                     invPrise: { type: "number", validation: { required: true } },
+                                     invTotal: { type: "number",validation: { required: true } }
 								 }
 							 }
 						 },
+                        aggregate: [
+                            { field: "invTotal", aggregate: "sum" }],
 						pageSize: 8,
+                        batch: true,
 						serverFiltering: true,
 						serverPaging: true,
 						serverSorting: true
@@ -264,22 +271,23 @@ angular
 								}
 							});
 					},
-					filterable:{
-							 mode: "row"
-						},
 					sortable: true,
 					resizable: true,
-					pageable: {
+				/*	pageable: {
 						refresh: true,
 						pageSizes: true,
 						buttonCount: 5
-					},
+					},*/
 					columns: [
 						{title: "#",template: "<span class='row-number'></span>", width:60},
-                        { field:"orgid", values:orgs,title: "Нэр /Mn/", width: 200 },
-						{ field:"code", title: "Нэр /Mn/", width: 200 },
-						{ field: "mean", title:"URL"}
+                        { field:"invId", title: "Барааны нэр"},
+                        { field:"measName", title: "Хэмжих нэгж", width: 150},
+                        { field:"invCount", title: "Тоо хэмжээ", width: 150},
+                        { field:"invPrise",template: '<span>#= invPrise #</span>', title: "Нэгжийн үнэ", width: 150 },
+                        { field:"invTotal",template: '<span>#= invTotal #</span>', title: "Дүн", width: 150 ,aggregates: ["sum"],   footerTemplate: "Нийт : {{ aggregate.sum }}"},
+                        { command: ["destroy"], title: "&nbsp;", width: 140}
 					],
+                    editable:true,
 					dataBound: function () {
 					var rows = this.items();
 					  $(rows).each(function () {
@@ -292,7 +300,7 @@ angular
 
 				};
 
-			if($rootScope.ruptype==1){
+			/*if($rootScope.ruptype==1){
 				$scope.pmenuGrid.editable="inline";
                 if($rootScope.rcreate==1){
                     $scope.pmenuGrid.toolbar= ["create"];
@@ -353,7 +361,7 @@ angular
 			//	$scope.pmenuGrid.toolbar= kendo.template($("#add").html());
 				$scope.pmenuGrid.editable="popup";
 				$scope.pmenuGrid.columns.push({template: kendo.template($("#update").html()), width: "200px"});
-			}
+			}*/
 	        
 		}
     ]);
