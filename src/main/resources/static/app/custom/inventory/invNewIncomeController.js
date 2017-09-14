@@ -54,7 +54,7 @@ angular
                     });
                 }
 
-                $scope.productsDataSource = {
+             /*   $scope.productsDataSource = {
                     batch: true,
                     transport: {
                         read:  {
@@ -81,9 +81,17 @@ angular
                         },
                         pageSize: 8,
                     }
-                }
+                }*/
 
-                console.log($scope.productsDataSource);
+                $scope.productsDataSource = {
+                    type: "odata",
+                    serverFiltering: true,
+                    transport: {
+                        read: {
+                            url: "https://demos.telerik.com/kendo-ui/service/Northwind.svc/Products",
+                        }
+                    }
+                };
 
                 $scope.customerOptions = {
                     filter: "startswith",
