@@ -84,11 +84,14 @@ angular
                 }*/
 
                 $scope.productsDataSource = {
-                    type: "odata",
                     serverFiltering: true,
                     transport: {
                         read: {
-                            url: "https://demos.telerik.com/kendo-ui/service/Northwind.svc/Products",
+                            url: "/api/cmm/resource/LutMenu?access_token="+$cookies.get('access_token'),
+                        },
+                        parameterMap: function(options) {
+                            options.data=JSON.stringify( options)
+                            return options;
                         }
                     }
                 };
@@ -96,8 +99,8 @@ angular
                 $scope.customerOptions = {
                     filter: "startswith",
                     dataSource: $scope.productsDataSource,
-                    dataTextField: "id",
-                    dataValueField: "menuname",
+                    dataTextField: "text",
+                    dataValueField: "value",
                     optionLabel: "Харилцагч...",
                     noDataTemplate: $("#noDataCustomerTemplate").html()
                 };
