@@ -9,7 +9,7 @@ altairApp
 
     	   $stateProvider
 
-            state("restricted.fund", {
+               .state("restricted.fund", {
                 url: "/fund",
                 template: '<div ui-view autoscroll="false" ng-class="{ \'uk-height-1-1\': page_full_height }"/>',
                 abstract: true,
