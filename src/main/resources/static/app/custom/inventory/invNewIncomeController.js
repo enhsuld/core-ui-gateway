@@ -5,8 +5,8 @@ angular
 	    		var aj=[{"text":"ROOT","value":"null"}];
                 var forumType=[{"text":"inline","value":1},{"text":"pop-up","value":2},{"text":"batch","value":3},{"text":"custom","value":4}];
                 $scope.domain="com.macro.dev.models.EgJournalInvDetail.";
-                $scope.domainLocation="com.macro.dev.models.SettingsMean.";
-                $scope.domainCustomer="com.macro.dev.models.SettingsMean.";
+                $scope.domainLocation="com.macro.dev.models.LnkLocationCompany.";
+                $scope.domainCustomer="com.macro.dev.models.LnkCustomerCompany.";
 
                 $rootScope.toBarActive = true;
 
@@ -26,40 +26,80 @@ angular
                         }
                     });
 
+
+
                 var modal_location = UIkit.modal("#modal_location");
                 $scope.newLocation = function(x,y){
                     modal_location.show();
                 };
 
                 var modal_customer = UIkit.modal("#modal_customer");
-                $scope.newLocation = function(x,y){
+                var $formValidateCustomer = $('#form_val_customer');
+                    $formValidateCustomer
+                    .parsley()
+                    .on('form:validated',function() {
+                        $scope.$apply();
+                    })
+                    .on('field:validated',function(parsleyField) {
+                        if($(parsleyField.$element).hasClass('md-input')) {
+                            $scope.$apply();
+                        }
+                    });
+
+                console.log($cookies.get("orgid"));
+                $scope.cs={
+                    name:'',
+                    code:'',
+                    phone:'',
+                    email:'',
+                    address:'',
+                    orgid:0
+                }
+                $scope.newCustomer = function(x,y){
+                    $scope.cs.name=y;
+                    $scope.cs.orgid=$cookies.get("orgid");
                     modal_customer.show();
                 };
 
-                $scope.submitFormLocation = function(){
-                    mainService.withdata('POST', '/api/core/create/'+$scope.domainLocation,  $scope.formdataLocation).
-                    then(function(data){
-                        sweet.show('Мэдээлэл', 'Үйлдэл амжилттай.', 'success');
-                        $(".k-grid").data("kendoGrid").dataSource.read();
-                    });
-                }
-
-                var modal_customer = UIkit.modal("#modal_customer");
-                $scope.newCustomer = function(x,y){
-                    modal_customer.show();
-                    mainService.withdata('POST', '/api/core/create/'+$scope.domainCustomer,  $scope.formdataCustomer).
-                    then(function(data){
-                        sweet.show('Мэдээлэл', 'Үйлдэл амжилттай.', 'success');
-                        $(".k-grid").data("kendoGrid").dataSource.read();
-                    });
-                }
-
-
-                $scope.productsDataSource = {
+                var customerDataSource = new kendo.data.DataSource({
                     serverFiltering: true,
                     transport: {
                         read: {
-                            url: "/api/cmm/resource/LutMenu?access_token="+$cookies.get('access_token'),
+                            url: "/api/cmm/resource/LnkCustomerCompany?access_token="+$cookies.get('access_token'),
+                        },
+                        parameterMap: function(options) {
+                            options.data=JSON.stringify( options)
+                            return options;
+                        }
+                    }
+                });
+
+                $scope.submitCustomer = function(){
+                    mainService.withdata('POST', '/api/cmm/action/create/'+$scope.domainCustomer,  $scope.cs).
+                    then(function(data){
+                        customerDataSource.read();
+                        modal_customer.hide();
+                        $scope.tr.customerId=data.id;
+                    });
+                }
+
+                $scope.submitFormLocation = function(){
+                    $formValidateLocation.parsley().validate();
+                    console.log($formValidate.parsley().validate());
+                    mainService.withdata('POST', '/api/core/create/'+$scope.domainLocation,  $scope.formdataLocation).
+                    then(function(data){
+                        modal_customer.show();
+                    });
+                }
+
+
+
+
+                $scope.locationDataSource = {
+                    serverFiltering: true,
+                    transport: {
+                        read: {
+                            url: "/api/cmm/resource/LnkLocationCompany?access_token="+$cookies.get('access_token'),
                         },
                         parameterMap: function(options) {
                             options.data=JSON.stringify( options)
@@ -68,19 +108,22 @@ angular
                     }
                 };
 
+
+
+
                 $scope.customerOptions = {
                     filter: "startswith",
-                    dataSource: $scope.productsDataSource,
-                    dataTextField: "menuname",
+                    dataSource: customerDataSource,
+                    dataTextField: "name",
                     dataValueField: "id",
                     optionLabel: "Харилцагч...",
                     noDataTemplate: $("#noDataCustomerTemplate").html()
                 };
                 $scope.locationOptions = {
                     filter: "startswith",
-                    dataSource: $scope.productsDataSource,
-                    dataTextField: "text",
-                    dataValueField: "value",
+                    dataSource: $scope.locationDataSource,
+                    dataTextField: "name",
+                    dataValueField: "id",
                     optionLabel: "Байршил...",
                     noDataTemplate: $("#noDataLocationTemplate").html()
                 };

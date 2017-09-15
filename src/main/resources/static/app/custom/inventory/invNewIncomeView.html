@@ -16,10 +16,10 @@
 										 <input type="text" ng-model="tr.date" name="val_birth" id="ognoo" required class="md-input" data-parsley-americandate data-parsley-americandate-message="This value should be a valid date (MM.DD.YYYY)" data-uk-datepicker="{format:'MM.DD.YYYY'}" md-input />
 									 </div>
 									 <div class="uk-form-row parsley-row">
-										 <select id="hariltsagch" kendo-drop-down-list style="width: 100%" k-options="customerOptions"></select>
+										 <select id="hariltsagch" ng-model="tr.customerId" kendo-drop-down-list style="width: 100%" k-options="customerOptions"></select>
 									 </div>
 									 <div class="uk-form-row parsley-row">
-										 <select id="customers" kendo-drop-down-list style="width: 100%" k-options="locationOptions"></select>
+										 <select id="customers" ng-model="tr.locationId" kendo-drop-down-list style="width: 100%" k-options="locationOptions"></select>
 									  </div>
 								 </div>
 								 <div class="uk-width-medium-2-3">
@@ -123,66 +123,66 @@
 						</div>
 					</div>
 				</div>
+				<div class="uk-modal-footer uk-text-right">
+					<button type="submit" class="md-btn md-btn-primary md-btn-wave-light waves-effect waves-button waves-light">Хадгалах</button>
+					<button type="button" class="md-btn md-btn-flat uk-modal-close">Хаах</button>
+				</div>
 			</form>
-			<div class="uk-modal-footer uk-text-right">
-				<button type="submit" class="md-btn md-btn-primary md-btn-wave-light waves-effect waves-button waves-light">Хадгалах</button>
-				<button type="button" class="md-btn md-btn-flat uk-modal-close">Хаах</button>
-			</div>
 		</div>
 	</div>
 	<div class="uk-modal" id="modal_customer">
 		<div class="uk-modal-dialog" data-uk-grid-margin>
 			<button type="button" class="uk-modal-close uk-close uk-close-alt"></button>
-			<h3 class="heading_a">Байршлын бүртгэл</h3>
-			<form name="form_val" id="form_val_customer"  data-ng-submit="submitFormCustomer($event)">
+			<h3 class="heading_a">Харилцагчийн бүртгэл</h3>
+			<form name="form_val" id="form_val_customer" ng-submit="submitCustomer()">
 				<hr style="margin-bottom:10px;">
 				<div class="uk-margin-medium-bottom">
 					<div class="uk-grid" data-uk-grid-margin>
 						<div class="uk-width-medium-1-1">
 							<div class="uk-form-row parsley-row">
-								<label for="locationCode">Байршлын код<span class="req">*</span></label>
-								<input type="text"id="locationCode" ng-model="formdataLocation.code" name="bairshil" required class="md-input" md-input />
+								<label for="locationCode">Харилцагчийн код<span class="req">*</span></label>
+								<input type="text"id="customerCode" ng-model="cs.code" name="bairshil" required class="md-input" md-input />
 							</div>
 							<div class="uk-form-row parsley-row">
-								<label for="locationCode">Байршлын код<span class="req">*</span></label>
-								<input type="text"id="locationCode" ng-model="formdataLocation.code" name="bairshil" required class="md-input" md-input />
+								<label for="locationCode">Нэр<span class="req">*</span></label>
+								<input type="text"id="name" ng-model="cs.name" name="bairshil" required class="md-input" md-input />
 							</div>
 							<div class="uk-form-row parsley-row">
-								<label for="locationCode">Байршлын код<span class="req">*</span></label>
-								<input type="text"id="locationCode" ng-model="formdataLocation.code" name="bairshil" required class="md-input" md-input />
+								<label for="locationCode">Утас<span class="req">*</span></label>
+								<input type="number"id="phone" ng-model="cs.phone" name="bairshil" required class="md-input" md-input />
 							</div>
 							<div class="uk-form-row parsley-row">
-								<label for="locationCode">Байршлын код<span class="req">*</span></label>
-								<input type="text"id="locationCode" ng-model="formdataLocation.code" name="bairshil" required class="md-input" md-input />
+								<label for="locationCode">И-мэйл хаяг<span class="req">*</span></label>
+								<input type="email"id="email" ng-model="cs.email" name="bairshil" required class="md-input" md-input />
 							</div>
 							<div class="uk-form-row parsley-row">
-								<label for="locationName">Нэр<span class="req">*</span></label>
-								<input type="text"id="locationName" ng-model="formdataLocation.name" name="bairshil" required class="md-input" md-input />
+								<label for="locationName">Хаяг<span class="req">*</span></label>
+								<input type="text"id="address" ng-model="cs.address" name="bairshil" required class="md-input" md-input />
 							</div>
 						</div>
 					</div>
 				</div>
+				<div class="uk-modal-footer uk-text-right">
+					<button type="submit" class="md-btn md-btn-primary md-btn-wave-light waves-effect waves-button waves-light">Хадгалах</button>
+					<button type="button" class="md-btn md-btn-flat uk-modal-close">Хаах</button>
+				</div>
 			</form>
-			<div class="uk-modal-footer uk-text-right">
-				<button type="submit" class="md-btn md-btn-primary md-btn-wave-light waves-effect waves-button waves-light">Хадгалах</button>
-				<button type="button" class="md-btn md-btn-flat uk-modal-close">Хаах</button>
-			</div>
 		</div>
 	</div>
 
 	<script id="noDataLocationTemplate" type="text/x-kendo-template">
 		<div>
-			No data found. Do you want to add new item - '#: instance.filterInput.val() #' ?
+			Хайлтанд тохирох өгөгдөл олдсонгүй. Шинээр нэмэх үү - '#: instance.filterInput.val() #' ?
 		</div>
 		<br />
-		<button class="k-button" ng-click="newLocation('#: instance.element[0].id #', '#: instance.filterInput.val() #')">Add new item</button>
+		<button class="k-button" ng-click="newLocation('#: instance.element[0].id #', '#: instance.filterInput.val() #')">Нэмэх</button>
 	</script>
 	<script id="noDataCustomerTemplate" type="text/x-kendo-tmpl">
 		<div>
-			No data found. Do you want to add new item - '#: instance.filterInput.val() #' ?
+			Хайлтанд тохирох өгөгдөл олдсонгүй. Шинээр нэмэх үү - '#: instance.filterInput.val() #' ?
 	  	</div>
 		<br />
-		<button class="k-button" ng-click="newCustomer('#: instance.element[0].id #', '#: instance.filterInput.val() #')">Add new item</button>
+		<button class="k-button" ng-click="newCustomer('#: instance.element[0].id #', '#: instance.filterInput.val() #')">Нэмэх</button>
 	</script>
 
 	<script type="text/x-kendo-template" id="add">
@@ -190,14 +190,7 @@
            <button class="md-btn md-btn-success" ng-click='inventory()'> <span class='k-icon k-i-plus'></span>Бараа материал</button>
          </div>
     </script>
-    <script type="text/x-kendo-template" id="update">
-         <div id="details-container" style="float:left;">
-           <button class="md-btn md-btn-small md-btn-primary" ng-click='edit(#:id#)'> </span>засах</button>
-         </div>
-		<div id="details-container1" style="float:left; margin-left: 20px;">
-           <button class="md-btn md-btn-small md-btn-danger" ng-click='deleteO(#:id#)'> </span>устгах</button>
-         </div>
-    </script>
+
 
 	<script type="x/kendo-template" id="page-template">
 		<div class="page-template">

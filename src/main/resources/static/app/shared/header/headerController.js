@@ -14,8 +14,8 @@ angular
 
         	mainService.withdomain('get','/api/user')
 	  			.then(function(data){
-	  				 $rootScope.user =  data;
-	  				 $scope.user=data;	
+	  				 $scope.user=data;
+	  				 $cookies.put("orgid",data.organizationid);
 		  	});
         	 
 
@@ -34,6 +34,7 @@ angular
                     function(data){
                         $cookies.remove("access_token");
                         $cookies.remove("remember");
+                        $cookies.remove("orgid");
                         $state.go("login");
                     },function(){
                         console.log("error");
