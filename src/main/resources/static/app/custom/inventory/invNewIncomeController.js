@@ -54,34 +54,6 @@ angular
                     });
                 }
 
-             /*   $scope.productsDataSource = {
-                    batch: true,
-                    transport: {
-                        read:  {
-                            url: "/api/core/list/LutMenu?access_token="+$cookies.get('access_token'),
-                            dataType: "jsonp"
-                        },
-                        parameterMap: function(options, operation) {
-                            if (operation !== "read" && options.models) {
-                                return {models: kendo.stringify(options.models)};
-                            }
-                        },
-                        schema: {
-                            data:"data",
-                            total:"total",
-                            model: {
-                                id: "id",
-                                fields: {
-                                    id: { editable: false,nullable: true},
-                                    code: { type: "string", validation: { required: true } },
-                                    orgid: { type: "number", validation: { required: true } },
-                                    mean: { type: "string",validation: { required: true } },
-                                }
-                            }
-                        },
-                        pageSize: 8,
-                    }
-                }*/
 
                 $scope.productsDataSource = {
                     serverFiltering: true,
@@ -99,8 +71,8 @@ angular
                 $scope.customerOptions = {
                     filter: "startswith",
                     dataSource: $scope.productsDataSource,
-                    dataTextField: "text",
-                    dataValueField: "value",
+                    dataTextField: "menuname",
+                    dataValueField: "id",
                     optionLabel: "Харилцагч...",
                     noDataTemplate: $("#noDataCustomerTemplate").html()
                 };
