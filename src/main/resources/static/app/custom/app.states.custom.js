@@ -9,6 +9,116 @@ altairApp
 
     	   $stateProvider
 
+            state("restricted.fund", {
+                url: "/fund",
+                template: '<div ui-view autoscroll="false" ng-class="{ \'uk-height-1-1\': page_full_height }"/>',
+                abstract: true,
+                ncyBreadcrumb: {
+                    label: 'Аудит'
+                }
+            })
+
+                .state("restricted.fund.income", {
+                    url: "/income",
+                    templateUrl: 'app/custom/fund/fundincomeView.html',
+                    controller: 'fundincomeCtrl',
+                    resolve: {
+                        deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                            return $ocLazyLoad.load([
+                                'lazy_KendoUI',
+                                'lazy_parsleyjs',
+                                'lazy_ionRangeSlider',
+                                'lazy_masked_inputs',
+                                'lazy_character_counter',
+                                'app/custom/fund/fundincomeController.js'
+                            ]);
+                        }],
+                        orgs: function($http,$state){
+                            return $http({ method: 'GET', url: '/api/core/resource/LutCmmOrganization' })
+                                .then(function (data) {
+                                    return data.data;
+                                })
+                                .catch(function(response) {
+                                    $state.go("login");
+                                });
+                        }
+                    },
+                    data: {
+                        pageTitle: 'Мөнгөн хөрөнгө'
+                    },
+                    ncyBreadcrumb: {
+                        label: 'Мөнгөн хөрөнгө'
+                    }
+                })
+
+                .state("restricted.fund.newincome", {
+                    url: "/income/newincome",
+                    templateUrl: 'app/custom/fund/fundNewIncomeView.html',
+                    controller: 'fnewincomeCtrl',
+                    resolve: {
+                        deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                            return $ocLazyLoad.load([
+                                'lazy_KendoUI',
+                                'lazy_parsleyjs',
+                                'lazy_ionRangeSlider',
+                                'lazy_masked_inputs',
+                                'lazy_character_counter',
+                                'app/custom/fund/fundNewIncomeController.js'
+                            ]);
+                        }],
+                        orgs: function($http,$state){
+                            return $http({ method: 'GET', url: '/api/core/resource/LutCmmOrganization' })
+                                .then(function (data) {
+                                    return data.data;
+                                })
+                                .catch(function(response) {
+                                    $state.go("login");
+                                });
+                        }
+                    },
+                    data: {
+                        pageTitle: 'Бараа материал нэмэх'
+                    },
+                    ncyBreadcrumb: {
+                        label: 'Худалдан авалт',
+                        parent:'restricted.inv.income'
+                    }
+                })
+
+                .state("restricted.fund.newexp", {
+                    url: "/fund/newexp",
+                    templateUrl: 'app/custom/fund/fundNewExpView.html',
+                    controller: 'fnewexpCtrl',
+                    resolve: {
+                        deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                            return $ocLazyLoad.load([
+                                'lazy_KendoUI',
+                                'lazy_parsleyjs',
+                                'lazy_ionRangeSlider',
+                                'lazy_masked_inputs',
+                                'lazy_character_counter',
+                                'app/custom/fund/fundNewExpController.js'
+                            ]);
+                        }],
+                        orgs: function($http,$state){
+                            return $http({ method: 'GET', url: '/api/core/resource/LutCmmOrganization' })
+                                .then(function (data) {
+                                    return data.data;
+                                })
+                                .catch(function(response) {
+                                    $state.go("login");
+                                });
+                        }
+                    },
+                    data: {
+                        pageTitle: 'Бараа материал нэмэх'
+                    },
+                    ncyBreadcrumb: {
+                        label: 'Худалдан авалт',
+                        parent:'restricted.inv.income'
+                    }
+                })
+
                .state("restricted.inv", {
                    url: "/inventory",
                    template: '<div ui-view autoscroll="false" ng-class="{ \'uk-height-1-1\': page_full_height }"/>',
