@@ -14,6 +14,7 @@ angular
                     $rootScope.toBarActive = false;
                 });
 
+                var modal_location = UIkit.modal("#modal_location");
                 var $formValidateLocation = $('#form_val_location');
                 $formValidateLocation
                     .parsley()
@@ -26,10 +27,16 @@ angular
                         }
                     });
 
+                $scope.formdataLocation={
+                    name:'',
+                    code:'',
+                    orgid:0
+                };
 
 
-                var modal_location = UIkit.modal("#modal_location");
                 $scope.newLocation = function(x,y){
+                    $scope.formdataLocation.name=y;
+                    $scope.formdataLocation.orgid=$cookies.get("orgid");
                     modal_location.show();
                 };
 
@@ -46,7 +53,6 @@ angular
                         }
                     });
 
-                console.log($cookies.get("orgid"));
                 $scope.cs={
                     name:'',
                     code:'',
@@ -74,28 +80,7 @@ angular
                     }
                 });
 
-                $scope.submitCustomer = function(){
-                    mainService.withdata('POST', '/api/cmm/action/create/'+$scope.domainCustomer,  $scope.cs).
-                    then(function(data){
-                        customerDataSource.read();
-                        modal_customer.hide();
-                        $scope.tr.customerId=data.id;
-                    });
-                }
-
-                $scope.submitFormLocation = function(){
-                    $formValidateLocation.parsley().validate();
-                    console.log($formValidate.parsley().validate());
-                    mainService.withdata('POST', '/api/core/create/'+$scope.domainLocation,  $scope.formdataLocation).
-                    then(function(data){
-                        modal_customer.show();
-                    });
-                }
-
-
-
-
-                $scope.locationDataSource = {
+                var locationDataSource = new kendo.data.DataSource({
                     serverFiltering: true,
                     transport: {
                         read: {
@@ -106,7 +91,26 @@ angular
                             return options;
                         }
                     }
+                });
+
+                $scope.submitCustomer = function(){
+                    mainService.withdata('POST', '/api/cmm/action/create/'+$scope.domainCustomer,  $scope.cs).
+                    then(function(data){
+                        customerDataSource.read();
+                        modal_customer.hide();
+                        $scope.tr.customerId=data.id;
+                    });
+                }
+
+                $scope.submitFormLocation = function(){
+                    mainService.withdata('POST', '/api/cmm/action/create/'+$scope.domainLocation,  $scope.formdataLocation).
+                    then(function(data){
+                        modal_location.hide();
+                        locationDataSource.read();
+                        $scope.tr.locationId=data.id;
+                    });
                 };
+
 
 
 
@@ -121,7 +125,7 @@ angular
                 };
                 $scope.locationOptions = {
                     filter: "startswith",
-                    dataSource: $scope.locationDataSource,
+                    dataSource: locationDataSource,
                     dataTextField: "name",
                     dataValueField: "id",
                     optionLabel: "Байршил...",
