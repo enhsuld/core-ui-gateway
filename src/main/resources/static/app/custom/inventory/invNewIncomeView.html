@@ -77,7 +77,8 @@
 									 </div>
 									 <div class="uk-width-medium-2-3">
 										 <div class="uk-form-row parsley-row">
-											 <input type="text" id="bank" ng-model="tr.bankid" config="selectize_c_config" options="selectize_c_options" name="selectize_c" selectize data-uk-tooltip="{pos:'top'}" title="Select with tooltip">
+											 <select id="banks" ng-model="tr.bankid" kendo-drop-down-list style="width: 100%" k-options="bankOptions"></select>
+											 <!--<input type="text" id="bank" ng-model="tr.bankid" config="selectize_c_config" options="selectize_c_options" name="selectize_c" selectize data-uk-tooltip="{pos:'top'}" title="Select with tooltip">-->
 										 </div>
 										 <div class="uk-form-row parsley-row">
 											 <label for="thugatsaa">Төлөгдөх хугацаа / 14 хоног / <span class="req">*</span></label>
@@ -119,6 +120,29 @@
 							<div class="uk-form-row parsley-row">
 								<label for="locationName">Нэр<span class="req">*</span></label>
 								<input type="text"id="locationName" ng-model="formdataLocation.name" name="bairshil" required class="md-input" md-input />
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="uk-modal-footer uk-text-right">
+					<button type="submit" class="md-btn md-btn-primary md-btn-wave-light waves-effect waves-button waves-light">Хадгалах</button>
+					<button type="button" class="md-btn md-btn-flat uk-modal-close">Хаах</button>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="uk-modal" id="modal_bank">
+		<div class="uk-modal-dialog" data-uk-grid-margin>
+			<button type="button"  class="uk-modal-close uk-close uk-close-alt"></button>
+			<h3 class="heading_a">Банкны бүртгэл</h3>
+			<form name="form_val" id="form_val_bank"  ng-submit="submitFormBank($event)">
+				<hr style="margin-bottom:10px;">
+				<div class="uk-margin-medium-bottom">
+					<div class="uk-grid" data-uk-grid-margin>
+						<div class="uk-width-medium-1-1">
+							<div class="uk-form-row parsley-row">
+								<label for="locationName">Нэр<span class="req">*</span></label>
+								<input type="text"id="bankName" ng-model="bk.name" name="bairshil" required class="md-input" md-input />
 							</div>
 						</div>
 					</div>
@@ -184,6 +208,15 @@
 		<br />
 		<button class="k-button" ng-click="newCustomer('#: instance.element[0].id #', '#: instance.filterInput.val() #')">Нэмэх</button>
 	</script>
+
+	<script id="noDataBankTemplate" type="text/x-kendo-tmpl">
+		<div>
+			Хайлтанд тохирох өгөгдөл олдсонгүй. Шинээр нэмэх үү - '#: instance.filterInput.val() #' ?
+	  	</div>
+		<br />
+		<button class="k-button" ng-click="newBank('#: instance.element[0].id #', '#: instance.filterInput.val() #')">Нэмэх</button>
+	</script>
+
 
 	<script type="text/x-kendo-template" id="add">
          <div style="text-align:left;">

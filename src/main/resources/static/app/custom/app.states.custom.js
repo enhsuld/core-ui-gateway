@@ -162,7 +162,7 @@ altairApp
                    }
                })
                .state("restricted.inv.newincome", {
-                   url: "/income/add",
+                   url: "/income/:id",
                    templateUrl: 'app/custom/inventory/invNewIncomeView.html',
                    controller: 'newincomeCtrl',
                    resolve: {
