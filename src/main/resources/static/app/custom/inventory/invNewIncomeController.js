@@ -7,12 +7,26 @@ angular
                 $scope.domain="com.macro.dev.models.EgJournalInvDetail.";
                 $scope.domainLocation="com.macro.dev.models.LnkLocationCompany.";
                 $scope.domainCustomer="com.macro.dev.models.LnkCustomerCompany.";
+                $scope.domainBank="com.macro.dev.models.LutBank.";
 
                 $rootScope.toBarActive = true;
 
                 $scope.$on('$destroy', function() {
                     $rootScope.toBarActive = false;
                 });
+
+                var modal_bank = UIkit.modal("#modal_bank");
+                var $formValidateBank = $('#form_val_bank');
+                $formValidateBank
+                    .parsley()
+                    .on('form:validated',function() {
+                        $scope.$apply();
+                    })
+                    .on('field:validated',function(parsleyField) {
+                        if($(parsleyField.$element).hasClass('md-input')) {
+                            $scope.$apply();
+                        }
+                    });
 
                 var modal_location = UIkit.modal("#modal_location");
                 var $formValidateLocation = $('#form_val_location');
@@ -66,6 +80,12 @@ angular
                     $scope.cs.orgid=$cookies.get("orgid");
                     modal_customer.show();
                 };
+                $scope.bk={};
+                $scope.newBank = function(x,y){
+                    $scope.bk.name=y;
+                    modal_bank.show();
+                };
+
 
                 var customerDataSource = new kendo.data.DataSource({
                     serverFiltering: true,
@@ -93,6 +113,19 @@ angular
                     }
                 });
 
+                var bankDataSource = new kendo.data.DataSource({
+                    serverFiltering: true,
+                    transport: {
+                        read: {
+                            url: "/api/cmm/resource/LutBank?access_token="+$cookies.get('access_token'),
+                        },
+                        parameterMap: function(options) {
+                            options.data=JSON.stringify( options)
+                            return options;
+                        }
+                    }
+                });
+
                 $scope.submitCustomer = function(){
                     mainService.withdata('POST', '/api/cmm/action/create/'+$scope.domainCustomer,  $scope.cs).
                     then(function(data){
@@ -111,7 +144,14 @@ angular
                     });
                 };
 
-
+                $scope.submitFormBank = function(){
+                    mainService.withdata('POST', '/api/cmm/action/create/'+$scope.domainBank,  $scope.bk).
+                    then(function(data){
+                        modal_bank.hide();
+                        bankDataSource.read();
+                        $scope.tr.bankid=data.id;
+                    });
+                };
 
 
 
@@ -130,6 +170,15 @@ angular
                     dataValueField: "id",
                     optionLabel: "Байршил...",
                     noDataTemplate: $("#noDataLocationTemplate").html()
+                };
+
+                $scope.bankOptions = {
+                    filter: "startswith",
+                    dataSource: bankDataSource,
+                    dataTextField: "name",
+                    dataValueField: "id",
+                    optionLabel: "Банк...",
+                    noDataTemplate: $("#noDataBankTemplate").html()
                 };
 
                 $scope.tr={
@@ -175,16 +224,6 @@ angular
                     searchField: 'title'
                 };
 
-                $scope.selectize_c_options = ["Item A", "Item B", "Item C"];
-
-                $scope.selectize_c_config = {
-                    plugins: {
-                        'tooltip': ''
-                    },
-                    create: false,
-                    maxItems: 1,
-                    placeholder: 'Банк...'
-                };
 
                 var modal_inventory = UIkit.modal("#modal_inventory");
                 $scope.inventory = function(){
