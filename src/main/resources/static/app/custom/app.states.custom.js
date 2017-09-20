@@ -176,10 +176,10 @@ altairApp
                                'app/custom/inventory/invNewIncomeController.js'
                            ]);
                        }],
-                       orgs: function($http,$state){
-                           return $http({ method: 'GET', url: '/api/core/resource/LutCmmOrganization' })
+                       egJournal: function($http,$state,$stateParams){
+                           return $http({ method: 'GET', url: '/api/cmm/EgJournal/item/'+$stateParams.id })
                                .then(function (data) {
-                                   return data.data;
+                                   return data.data[0];
                                })
                                .catch(function(response) {
                                    $state.go("login");
