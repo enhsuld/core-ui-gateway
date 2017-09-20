@@ -52,7 +52,7 @@ altairApp
                 })
 
                 .state("restricted.fund.newincome", {
-                    url: "/income/newincome",
+                    url: "/newincome",
                     templateUrl: 'app/custom/fund/fundNewIncomeView.html',
                     controller: 'fnewincomeCtrl',
                     resolve: {
@@ -86,7 +86,7 @@ altairApp
                 })
 
                 .state("restricted.fund.newexp", {
-                    url: "/fund/newexp",
+                    url: "/newexp",
                     templateUrl: 'app/custom/fund/fundNewExpView.html',
                     controller: 'fnewexpCtrl',
                     resolve: {
