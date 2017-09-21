@@ -4,18 +4,20 @@ angular
 	        function ($scope,$rootScope,$stateParams,companyProduct,egJournal,mainService,$state,sweet,$cookies) {
 	    		var aj=[{"text":"ROOT","value":"null"}];
                 var forumType=[{"text":"inline","value":1},{"text":"pop-up","value":2},{"text":"batch","value":3},{"text":"custom","value":4}];
-                $scope.domain="com.macro.dev.models.EgJournalInvDetail.";
+                $scope.domain="com.macro.dev.models.LnkInventoryCompany.";
                 $scope.domainLocation="com.macro.dev.models.LnkLocationCompany.";
                 $scope.domainCustomer="com.macro.dev.models.LnkCustomerCompany.";
                 $scope.domainBank="com.macro.dev.models.LnkBankCompany.";
                 $scope.domainJournal="com.macro.dev.models.EgJournal.";
-
+                $scope.domainLutInventory="com.macro.dev.models.LutInventoryCompany.";
+                var invGroup=[{"name":"Бараа материал","id":"Бараа материал"},{"name":"Түүхий эд материал","id":"Түүхий эд материал"},{"name":"Хангамжийн материал","id":"Хангамжийн материал"},{"name":"Бусад материал","id":"Бусад материал"}];
+                var measItem=[{"name":"Ширхэг","id":1},{"name":"Килограмм","id":2},{"name":"Тонн","id":3},{"name":"литр","id":4},{"name":"сав","id":5},{"name":"боодол","id":6},{"name":"Уут","id":7},{"name":"Хайрцаг","id":8},{"name":"Метр","id":9},{"name":"метр куб","id":10},{"name":"Метр квадрат","id":11},{"name":"Га","id":12}];
                 $rootScope.toBarActive = true;
                 $scope.tr=egJournal;
                 $scope.$on('$destroy', function() {
                     $rootScope.toBarActive = false;
                 });
-
+                console.log(companyProduct);
                 var $maskedInput = $('.masked_input');
                 if($maskedInput.length) {
                     $maskedInput.inputmask();
@@ -104,6 +106,7 @@ angular
 
                 $scope.inv={};
                 $scope.newInventory = function(y){
+                    console.log();
                     $scope.inv.name=y;
                     $scope.inv.orgId=$cookies.get("orgid");
                     modal_inventory.show();
@@ -152,7 +155,7 @@ angular
                     serverFiltering: true,
                     transport: {
                         read: {
-                            url: "/api/cmm/resource/LnkInventoryCompany?access_token="+$cookies.get('access_token'),
+                            url: "/api/cmm/resource/LutInventoryCompany?access_token="+$cookies.get('access_token'),
                             data: {"custom":"where orgId = " + $cookies.get("orgid"),"sort":[{field: 'id', dir: 'asc'}]}
                         },
                         parameterMap: function(options) {
@@ -160,7 +163,7 @@ angular
                             return options;
                         }
                     },
-                    group: { field: "name" }
+                    group: { field: "groupName" }
                 });
 
                 $scope.submitCustomer = function(){
@@ -190,6 +193,7 @@ angular
                     });
                 };
 
+
                 $scope.submitJournalForm = function(){
                     mainService.withdata('POST', '/api/cmm/action/update/'+$scope.domainJournal,  $scope.tr).
                     then(function(data){
@@ -197,10 +201,36 @@ angular
                     });
                 };
 
+                $scope.submitFormInventory = function(){
+                    mainService.withdata('POST', '/api/cmm/action/create/'+$scope.domainLutInventory,  $scope.inv).
+                    then(function(data){
+                        modal_inventory.hide();
+                        inventoryDataSource.read();
+                    });
+                };
 
                 $scope.categoryDropDownEditor = function(container, options) {
-                    var editor = $('<input kendo-drop-down-list k-options="invOptions" data-bind="value:' + options.field + '"/>')
+                    var editor = $('<input kendo-drop-down-list k-options="invOptions" data-bind="value:' + options.value + '"/>')
                         .appendTo(container);
+                };
+
+                $scope.locationEditor = function(container, options) {
+                    var editor = $('<input kendo-drop-down-list k-options="locationOptions" data-bind="value:' + options.field + '"/>')
+                        .appendTo(container);
+                };
+
+
+                $scope.groupOptions = {
+                    dataSource: invGroup,
+                    dataTextField: "name",
+                    dataValueField: "id",
+                    optionLabel: "Бараа материалын бүлэг..."
+                };
+                $scope.measOptions = {
+                    dataSource: measItem,
+                    dataTextField: "name",
+                    dataValueField: "id",
+                    optionLabel: "Хэмжих нэгж..."
                 };
 
                 $scope.invOptions = {
@@ -208,7 +238,7 @@ angular
                     dataSource: inventoryDataSource,
                     dataTextField: "name",
                     dataValueField: "id",
-                    optionLabel: "Харилцагч...",
+                    optionLabel: "Бараа материал...",
                     noDataTemplate: $("#noDataInventoryTemplate").html()
                 };
 
@@ -302,14 +332,11 @@ angular
 					}
 				});
 
-                $scope.refreshGrid= function(){
-                    alert();
-                }
                 var gridDataSource = new kendo.data.DataSource({
                     autoSync:true,
                     transport: {
                         read:  {
-                            url: "/api/core/list/EgJournalInvDetail?access_token="+$cookies.get('access_token'),
+                            url: "/api/core/list/LnkInventoryCompany?access_token="+$cookies.get('access_token'),
                             data: {"custom":"where egId = " + $stateParams.id,"sort":[{field: 'id', dir: 'asc'}]},
                             type: 'GET',
                             dataType: "json",
@@ -350,7 +377,7 @@ angular
                         create: {
                             url: "/api/core/create/"+$scope.domain+"?access_token="+$cookies.get('access_token'),
                             dataType: "json",
-                            data: {"egId":+ $stateParams.id},
+                            data: {"egId": $stateParams.id,"orgId":$cookies.get("orgid")},
                             type:"POST",
                             complete: function(e) {
                                 $(".k-grid").data("kendoGrid").dataSource.read();
@@ -425,7 +452,8 @@ angular
 					columns: [
 						{title: "#",template: "<span class='row-number'></span>", width:60},
                         { field:"invId", values:companyProduct,editor: $scope.categoryDropDownEditor,title: "Барааны нэр"},
-                        { field:"measName", title: "Хэмжих нэгж", width: 150},
+                        { field:"measId", title: "Хэмжих нэгж", width: 150},
+                        { field:"locId", title: "Байршил", editor: $scope.locationEditor,width: 150},
                         { field:"invCount", title: "Тоо хэмжээ", width: 150},
                         { field:"invPrise", title: "Нэгжийн үнэ", width: 150 },
                         { field:"invTotal",title: "Дүн", width: 150 ,aggregates: ["sum"],   footerTemplate: "<span ng-bind=pmenuGrid.getTotal()></span>"},

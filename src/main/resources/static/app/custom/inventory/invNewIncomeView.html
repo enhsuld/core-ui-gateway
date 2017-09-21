@@ -110,16 +110,14 @@
 					<div class="uk-grid" data-uk-grid-margin>
 						<div class="uk-width-medium-1-1">
 							<div class="uk-form-row parsley-row">
-								<label for="locationCode">Бараа материалын бүлэг<span class="req">*</span></label>
-								<select id="aa" required ng-model="inv.group" kendo-drop-down-list style="width: 100%" k-options="locationOptions"></select>
+								<select id="groupId" required ng-model="inv.groupName" kendo-drop-down-list style="width: 100%" k-options="groupOptions"></select>
 							</div>
 							<div class="uk-form-row parsley-row">
 								<label for="locationCode">Барааны нэр<span class="req">*</span></label>
 								<input type="text"id="invName" ng-model="inv.name" name="name" required class="md-input" md-input />
 							</div>
 							<div class="uk-form-row parsley-row">
-								<label for="locationName">Хэмжих нэгж<span class="req">*</span></label>
-								<input type="text"id="measurement" ng-model="inv.msId" name="msId" required class="md-input" md-input />
+								<select id="measId" required ng-model="inv.measId" kendo-drop-down-list style="width: 100%" k-options="measOptions"></select>
 							</div>
 						</div>
 					</div>

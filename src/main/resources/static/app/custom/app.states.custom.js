@@ -317,7 +317,7 @@ altairApp
                                });
                        },
                        companyProduct: function($http,$state,$cookies){
-                           return $http({ method: 'GET', url: '/api/cmm/EgJournal/item/'+$cookies.get("orgid")})
+                           return $http({ method: 'GET', url: '/api/cmm/LutInventoryCompany/item/'+$cookies.get("orgid")})
                                .then(function (data) {
                                    return data.data[0];
                                })
