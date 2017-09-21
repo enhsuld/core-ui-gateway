@@ -13,7 +13,7 @@
 								 <div class="uk-width-medium-1-3">
 									 <div class="uk-form-row parsley-row">
 										 <label for="ognoo">Огноо<span class="req">*</span></label>
-										 <input type="text" ng-model="tr.date" name="val_birth" id="ognoo" required class="md-input" data-parsley-americandate data-parsley-americandate-message="This value should be a valid date (MM.DD.YYYY)" data-uk-datepicker="{format:'MM.DD.YYYY'}" md-input />
+										 <input type="text" ng-model="tr.date" name="val_birth" id="ognoo" required class="md-input" data-parsley-americandate data-parsley-americandate-message="This value should be a valid date (DD.MM.YYYY)" data-uk-datepicker="{format:'DD.MM.YYYY'}" md-input />
 									 </div>
 									 <div class="uk-form-row parsley-row">
 										 <select id="hariltsagch" ng-model="tr.customerId" kendo-drop-down-list style="width: 100%" k-options="customerOptions"></select>
@@ -29,10 +29,10 @@
 												 <div class="uk-form-row parsley-row">
 													 <span style="float:left; margin:15px 15px 0 5px;" for="barimt">Баримт №</span>
 													 <div style="float:left; width:100px; margin: -1px 15px 0 0">
-														 <input type="text" ng-model="tr.receipttype" ng-change="receiptChange()" config="selectize_a_config" options="selectize_a_data.options" name="selectize_a" selectize />
+														 <input type="text" ng-model="tr.invoiceType" ng-change="receiptChange()" config="selectize_a_config" options="selectize_a_data.options" name="selectize_a" selectize />
 													 </div>
 													 <div style="float:left; width:150px; ">
-														 <input type="text" ng-model="tr.receiptno" ng-disabled="recieptDefault" name="bairshil" required class="md-input" md-input />
+														 <input type="text" ng-model="tr.invoiceNo" ng-disabled="recieptDefault" name="bairshil" required class="md-input" md-input />
 													 </div>
 
 												 </div>
@@ -41,7 +41,7 @@
 									 </div>
 									 <div class="uk-form-row parsley-row">
 										 <label for="guilgee">Гүйлгээний утга<span class="req">*</span></label>
-										 <textarea id="guilgee" cols="30" rows="2" style="min-height:90px;" class="md-input" ng-model="tr.transaction" md-input textarea-autosize></textarea>
+										 <textarea id="guilgee" cols="30" rows="2" style="min-height:90px;" class="md-input" ng-model="tr.mean" md-input textarea-autosize></textarea>
 									 </div>
 								 </div>
 							 </div>
@@ -64,25 +64,24 @@
 									 <div class="uk-width-medium-1-3">
 										 <div class="uk-form-row parsley-row">
 											 <label for="belneer">Бэлнээр<span class="req">*</span></label>
-											 <input class="md-input masked_input" ng-model="tr.cash" id="belneer" type="text" data-inputmask="'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 2, 'digitsOptional': false, 'prefix': '₮ ', 'placeholder': '0'" data-inputmask-showmaskonhover="false" md-input />
+											 <input class="md-input masked_input" ng-model="tr.cashValue" id="belneer" type="text" data-inputmask="'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 2, 'digitsOptional': false, 'prefix': '₮ ', 'placeholder': '0'" data-inputmask-showmaskonhover="false" md-input />
 										 </div>
 										 <div class="uk-form-row parsley-row">
 											 <label for="bankaar">Банкаар<span class="req">*</span></label>
-											 <input class="md-input masked_input" ng-model="tr.bank" id="bankaar" type="text" data-inputmask="'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 2, 'digitsOptional': false, 'prefix': '₮ ', 'placeholder': '0'" data-inputmask-showmaskonhover="false" md-input />
+											 <input ng-change="BankChange()" class="md-input masked_input" ng-model="tr.bankValue" id="bankaar" type="text" data-inputmask="'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 2, 'digitsOptional': false, 'prefix': '₮ ', 'placeholder': '0'" data-inputmask-showmaskonhover="false" md-input />
 										 </div>
 										 <div class="uk-form-row parsley-row">
 											 <label for="zeeleer">Зээлээр<span class="req">*</span></label>
-											 <input class="md-input masked_input" ng-model="tr.credit" id="zeeleer" type="text" data-inputmask="'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 2, 'digitsOptional': false, 'prefix': '₮ ', 'placeholder': '0'" data-inputmask-showmaskonhover="false" md-input />
+											 <input ng-change="CreditChange()" class="md-input masked_input" ng-model="tr.creditValue" id="zeeleer" type="text" data-inputmask="'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 2, 'digitsOptional': false, 'prefix': '₮ ', 'placeholder': '0'" data-inputmask-showmaskonhover="false" md-input />
 										 </div>
 									 </div>
 									 <div class="uk-width-medium-2-3">
 										 <div class="uk-form-row parsley-row">
-											 <select id="banks" ng-model="tr.bankid" kendo-drop-down-list style="width: 100%" k-options="bankOptions"></select>
-											 <!--<input type="text" id="bank" ng-model="tr.bankid" config="selectize_c_config" options="selectize_c_options" name="selectize_c" selectize data-uk-tooltip="{pos:'top'}" title="Select with tooltip">-->
+											 <select id="banks" ng-disabled="bankDefault" ng-model="tr.bankid" kendo-drop-down-list style="width: 100%" k-options="bankOptions"></select>
 										 </div>
 										 <div class="uk-form-row parsley-row">
 											 <label for="thugatsaa">Төлөгдөх хугацаа / 14 хоног / <span class="req">*</span></label>
-											 <input type="text" ng-model="tr.duration" name="val_birth" id="thugatsaa" required class="md-input" data-parsley-americandate data-parsley-americandate-message="This value should be a valid date (MM.DD.YYYY)" data-uk-datepicker="{format:'MM.DD.YYYY'}" md-input />
+											 <input type="text" ng-disabled="durationDefault" ng-model="tr.duration" name="val_birth" id="thugatsaa" required class="md-input" data-parsley-americandate data-parsley-americandate-message="This value should be a valid date (DD.MM.YYYY)" data-uk-datepicker="{format:'DD.MM.YYYY'}" md-input />
 										 </div>
 									 </div>
 								 </div>
@@ -143,6 +142,10 @@
 							<div class="uk-form-row parsley-row">
 								<label for="locationName">Нэр<span class="req">*</span></label>
 								<input type="text"id="bankName" ng-model="bk.name" name="bairshil" required class="md-input" md-input />
+							</div>
+							<div class="uk-form-row parsley-row">
+								<label for="locationName">Дансны дугаар<span class="req">*</span></label>
+								<input type="text"id="bankAccount" ng-model="bk.account" name="bankAccount" required class="md-input" md-input />
 							</div>
 						</div>
 					</div>

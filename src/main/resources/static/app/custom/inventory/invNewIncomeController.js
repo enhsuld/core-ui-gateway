@@ -1,16 +1,17 @@
 angular
     .module('altairApp')
-    	.controller("newincomeCtrl",['$scope','$rootScope','orgs','mainService','$state','sweet','$cookies',
-	        function ($scope,$rootScope,orgs,mainService,$state,sweet,$cookies) {
+    	.controller("newincomeCtrl",['$scope','$rootScope','egJournal','mainService','$state','sweet','$cookies',
+	        function ($scope,$rootScope,egJournal,mainService,$state,sweet,$cookies) {
 	    		var aj=[{"text":"ROOT","value":"null"}];
                 var forumType=[{"text":"inline","value":1},{"text":"pop-up","value":2},{"text":"batch","value":3},{"text":"custom","value":4}];
                 $scope.domain="com.macro.dev.models.EgJournalInvDetail.";
                 $scope.domainLocation="com.macro.dev.models.LnkLocationCompany.";
                 $scope.domainCustomer="com.macro.dev.models.LnkCustomerCompany.";
-                $scope.domainBank="com.macro.dev.models.LutBank.";
+                $scope.domainBank="com.macro.dev.models.LnkBankCompany.";
 
                 $rootScope.toBarActive = true;
-
+                console.log(egJournal);
+                $scope.tr=egJournal;
                 $scope.$on('$destroy', function() {
                     $rootScope.toBarActive = false;
                 });
@@ -41,11 +42,33 @@ angular
                         }
                     });
 
-                $scope.formdataLocation={
-                    name:'',
-                    code:'',
-                    orgid:0
-                };
+                $scope.formdataLocation={};
+
+                var d = new Date();
+                d.setMonth( d.getMonth( ) + 1 );
+                var currDate = d.getDate();
+                var currMonth = d.getMonth();
+                var currYear = d.getFullYear();
+                $scope.tr.date = currDate+"."+currMonth+"."+currYear;
+                $scope.bankDefault=true;
+                $scope.BankChange = function(){
+                    if($scope.tr.bankValue != 0){
+                        $scope.bankDefault=false;
+                    }
+                }
+                $scope.durationDefault=true;
+                $scope.CreditChange = function(){
+                    if($scope.tr.creditValue != 0){
+                        var dr = new Date();
+                        dr.setMonth( d.getMonth( ) + 1 );
+                        dr.setDate( dr.getDay() + 14 );
+                        var dcurrDate = dr.getDate();
+                        var dcurrMonth = dr.getMonth();
+                        var dcurrYear = dr.getFullYear();
+                        $scope.durationDefault=false;
+                        $scope.tr.duration  = dcurrDate+"."+dcurrMonth+"."+dcurrYear;
+                    }
+                }
 
 
                 $scope.newLocation = function(x,y){
@@ -83,6 +106,7 @@ angular
                 $scope.bk={};
                 $scope.newBank = function(x,y){
                     $scope.bk.name=y;
+                    $scope.bk.orgid=$cookies.get("orgid");
                     modal_bank.show();
                 };
 
@@ -117,7 +141,7 @@ angular
                     serverFiltering: true,
                     transport: {
                         read: {
-                            url: "/api/cmm/resource/LutBank?access_token="+$cookies.get('access_token'),
+                            url: "/api/cmm/resource/LnkBankCompany?access_token="+$cookies.get('access_token'),
                         },
                         parameterMap: function(options) {
                             options.data=JSON.stringify( options)
@@ -181,14 +205,12 @@ angular
                     noDataTemplate: $("#noDataBankTemplate").html()
                 };
 
-                $scope.tr={
-                    receipttype:1
-                }
 
                 $scope.recieptDefault=true;
                 $scope.receiptChange=function () {
-                    if($scope.tr.receipttype==1){
+                    if($scope.tr.invoiceType==0){
                         $scope.recieptDefault=true;
+                        $scope.tr.invoiceNo=$scope.tr.id;
                     }
                     else{
                         $scope.recieptDefault=false;
@@ -200,12 +222,12 @@ angular
                         {
                             id: 1,
                             title: "Автомат",
-                            value: "1"
+                            value: "0"
                         },
                         {
                             id: 2,
                             title: "Гараар",
-                            value: "2"
+                            value: "1"
                         }
                     ]
                 };
