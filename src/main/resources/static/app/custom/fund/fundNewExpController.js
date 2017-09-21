@@ -190,7 +190,7 @@ angular
             }
 
             $scope.back=function () {
-                $state.go('restricted.inv.income');
+                $state.go('restricted.fund.income');
             }
 
             var $maskedInput = $('.masked_input');

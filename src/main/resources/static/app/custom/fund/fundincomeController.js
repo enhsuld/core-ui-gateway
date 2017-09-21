@@ -124,23 +124,6 @@ angular
                 $state.go('restricted.fund.newexp');
             }
 
-            var $maskedInput = $('.masked_input');
-            if($maskedInput.length) {
-                $maskedInput.inputmask();
-            }
-
-            var $formValidate = $('#form_val');
-            $formValidate
-                .parsley()
-                .on('form:validated',function() {
-                    $scope.$apply();
-                })
-                .on('field:validated',function(parsleyField) {
-                    if($(parsleyField.$element).hasClass('md-input')) {
-                        $scope.$apply();
-                    }
-                });
-
             $scope.pmenuGrid = {
                 dataSource: {
 

@@ -77,11 +77,11 @@ altairApp
                         }
                     },
                     data: {
-                        pageTitle: 'Бараа материал нэмэх'
+                        pageTitle: 'Орлого'
                     },
                     ncyBreadcrumb: {
                         label: 'Худалдан авалт',
-                        parent:'restricted.inv.income'
+                        parent:'restricted.fund.income'
                     }
                 })
 
@@ -111,13 +111,145 @@ altairApp
                         }
                     },
                     data: {
-                        pageTitle: 'Бараа материал нэмэх'
+                        pageTitle: 'Зарлага'
                     },
                     ncyBreadcrumb: {
                         label: 'Худалдан авалт',
-                        parent:'restricted.inv.income'
+                        parent:'restricted.fund.income'
                     }
                 })
+
+               .state("restricted.fund.othertr", {
+                   url: "/othertr",
+                   templateUrl: 'app/custom/fund/fundOtherTrView.html',
+                   controller: 'fundothertrCtrl',
+                   resolve: {
+                       deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                           return $ocLazyLoad.load([
+                               'lazy_KendoUI',
+                               'lazy_parsleyjs',
+                               'lazy_ionRangeSlider',
+                               'lazy_masked_inputs',
+                               'lazy_character_counter',
+                               'app/custom/fund/fundOtherTrController.js'
+                           ]);
+                       }],
+                       orgs: function($http,$state){
+                           return $http({ method: 'GET', url: '/api/core/resource/LutCmmOrganization' })
+                               .then(function (data) {
+                                   return data.data;
+                               })
+                               .catch(function(response) {
+                                   $state.go("login");
+                               });
+                       }
+                   },
+                   data: {
+                       pageTitle: 'Мөнгөн хөрөнгө'
+                   },
+                   ncyBreadcrumb: {
+                       label: 'Мөнгөн хөрөнгө'
+                   }
+               })
+
+               .state("restricted.fund.newothertr", {
+                   url: "/newothertr",
+                   templateUrl: 'app/custom/fund/fundNewOtherTrView.html',
+                   controller: 'fnewothertrCtrl',
+                   resolve: {
+                       deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                           return $ocLazyLoad.load([
+                               'lazy_KendoUI',
+                               'lazy_parsleyjs',
+                               'lazy_ionRangeSlider',
+                               'lazy_masked_inputs',
+                               'lazy_character_counter',
+                               'app/custom/fund/fundNewOtherTrController.js'
+                           ]);
+                       }],
+                       orgs: function($http,$state){
+                           return $http({ method: 'GET', url: '/api/core/resource/LutCmmOrganization' })
+                               .then(function (data) {
+                                   return data.data;
+                               })
+                               .catch(function(response) {
+                                   $state.go("login");
+                               });
+                       }
+                   },
+                   data: {
+                       pageTitle: 'Мөнгөн хөрөнгө'
+                   },
+                   ncyBreadcrumb: {
+                       label: 'Мөнгөн хөрөнгө'
+                   }
+               })
+
+               .state("restricted.fund.currencyreg", {
+                   url: "/currencyreg",
+                   templateUrl: 'app/custom/fund/fundCurrencyRegView.html',
+                   controller: 'currencyregCtrl',
+                   resolve: {
+                       deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                           return $ocLazyLoad.load([
+                               'lazy_KendoUI',
+                               'lazy_parsleyjs',
+                               'lazy_ionRangeSlider',
+                               'lazy_masked_inputs',
+                               'lazy_character_counter',
+                               'app/custom/fund/fundCurrencyRegController.js'
+                           ]);
+                       }],
+                       orgs: function($http,$state){
+                           return $http({ method: 'GET', url: '/api/core/resource/LutCmmOrganization' })
+                               .then(function (data) {
+                                   return data.data;
+                               })
+                               .catch(function(response) {
+                                   $state.go("login");
+                               });
+                       }
+                   },
+                   data: {
+                       pageTitle: 'Мөнгөн хөрөнгө'
+                   },
+                   ncyBreadcrumb: {
+                       label: 'Мөнгөн хөрөнгө'
+                   }
+               })
+
+               .state("restricted.fund.currencyexch", {
+                   url: "/currencyexch",
+                   templateUrl: 'app/custom/fund/fundCurrencyExchView.html',
+                   controller: 'currencyexchCtrl',
+                   resolve: {
+                       deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                           return $ocLazyLoad.load([
+                               'lazy_KendoUI',
+                               'lazy_parsleyjs',
+                               'lazy_ionRangeSlider',
+                               'lazy_masked_inputs',
+                               'lazy_character_counter',
+                               'app/custom/fund/fundCurrencyExchController.js'
+                           ]);
+                       }],
+                       orgs: function($http,$state){
+                           return $http({ method: 'GET', url: '/api/core/resource/LutCmmOrganization' })
+                               .then(function (data) {
+                                   return data.data;
+                               })
+                               .catch(function(response) {
+                                   $state.go("login");
+                               });
+                       }
+                   },
+                   data: {
+                       pageTitle: 'Мөнгөн хөрөнгө'
+                   },
+                   ncyBreadcrumb: {
+                       label: 'Мөнгөн хөрөнгө'
+                   }
+               })
 
                .state("restricted.inv", {
                    url: "/inventory",
@@ -127,7 +259,6 @@ altairApp
                        label: 'Аудит'
                    }
                })
-
 
                .state("restricted.inv.income", {
                    url: "/income",
