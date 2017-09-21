@@ -12,10 +12,12 @@ angular
                     $rootScope.toBarActive = false;
                 });
 
-                $scope.cs={};
+                $scope.cs={
+                	orgId:$cookies.get("orgid")
+				};
 
                 $scope.inventory = function(){
-                    mainService.withdata('POST', '/api/cmm/action/create/'+$scope.domain,  $scope.cs).
+                    mainService.withdata('POST', '/api/cmm/inv/create/'+$scope.domain,  $scope.cs).
                     then(function(data){
                         $state.go('restricted.inv.newincome',{id:data.id});
                     });

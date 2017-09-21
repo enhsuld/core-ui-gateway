@@ -13,7 +13,7 @@ altairApp
             // Use $urlRouterProvider to configure any redirects (when) and invalid urls (otherwise).
             $urlRouterProvider
                 .when('/dashboard', '/')
-                .otherwise('/');
+                .otherwise('/login');
 
             $stateProvider
             // -- ERROR PAGES --

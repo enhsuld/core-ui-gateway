@@ -6,20 +6,20 @@
              <div class="md-card">
 			     <div class="md-card-content">
 					 <h3 class="heading_a">Бараа материал худалдан авалт {{aggregate.sum}}</h3>
-					 <form name="form_val" id="form_val"  data-ng-submit="submitForm($event)">
+					 <form name="form_val" id="form_val"  data-ng-submit="submitJournalForm($event)">
 						 <hr style="margin-bottom:10px;">
 						 <div class="uk-margin-medium-bottom">
 							 <div class="uk-grid" data-uk-grid-margin>
 								 <div class="uk-width-medium-1-3">
 									 <div class="uk-form-row parsley-row">
 										 <label for="ognoo">Огноо<span class="req">*</span></label>
-										 <input type="text" ng-model="tr.date" name="val_birth" id="ognoo" required class="md-input" data-parsley-americandate data-parsley-americandate-message="This value should be a valid date (DD.MM.YYYY)" data-uk-datepicker="{format:'DD.MM.YYYY'}" md-input />
+										 <input type="text" required ng-model="tr.date" name="val_birth" id="ognoo"  class="md-input" data-uk-datepicker="{format:'DD.MM.YYYY'}" md-input />
 									 </div>
 									 <div class="uk-form-row parsley-row">
-										 <select id="hariltsagch" ng-model="tr.customerId" kendo-drop-down-list style="width: 100%" k-options="customerOptions"></select>
+										 <select id="hariltsagch" required ng-model="tr.customerId" kendo-drop-down-list style="width: 100%" k-options="customerOptions"></select>
 									 </div>
 									 <div class="uk-form-row parsley-row">
-										 <select id="customers" ng-model="tr.locationId" kendo-drop-down-list style="width: 100%" k-options="locationOptions"></select>
+										 <select id="customers" required ng-model="tr.locationId" kendo-drop-down-list style="width: 100%" k-options="locationOptions"></select>
 									  </div>
 								 </div>
 								 <div class="uk-width-medium-2-3">
@@ -41,7 +41,7 @@
 									 </div>
 									 <div class="uk-form-row parsley-row">
 										 <label for="guilgee">Гүйлгээний утга<span class="req">*</span></label>
-										 <textarea id="guilgee" cols="30" rows="2" style="min-height:90px;" class="md-input" ng-model="tr.mean" md-input textarea-autosize></textarea>
+										 <textarea data-parsley-trigger="keyup" required data-parsley-minlength="10" data-parsley-maxlength="500"  data-parsley-minlength-message = "Come on! You need to enter at least a 10 caracters long comment.." id="guilgee" cols="30" rows="2" style="min-height:90px;" class="md-input" ng-model="tr.mean" md-input textarea-autosize></textarea>
 									 </div>
 								 </div>
 							 </div>
@@ -64,24 +64,24 @@
 									 <div class="uk-width-medium-1-3">
 										 <div class="uk-form-row parsley-row">
 											 <label for="belneer">Бэлнээр<span class="req">*</span></label>
-											 <input class="md-input masked_input" ng-model="tr.cashValue" id="belneer" type="text" data-inputmask="'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 2, 'digitsOptional': false, 'prefix': '₮ ', 'placeholder': '0'" data-inputmask-showmaskonhover="false" md-input />
+											 <input ng-model="tr.cashValue" class="md-input " id="belneer" type="number"  md-input />
 										 </div>
 										 <div class="uk-form-row parsley-row">
 											 <label for="bankaar">Банкаар<span class="req">*</span></label>
-											 <input ng-change="BankChange()" class="md-input masked_input" ng-model="tr.bankValue" id="bankaar" type="text" data-inputmask="'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 2, 'digitsOptional': false, 'prefix': '₮ ', 'placeholder': '0'" data-inputmask-showmaskonhover="false" md-input />
+											 <input ng-model="tr.bankValue" ng-change="BankChange()" class="md-input " id="bankaar" type="number"  md-input />
 										 </div>
 										 <div class="uk-form-row parsley-row">
 											 <label for="zeeleer">Зээлээр<span class="req">*</span></label>
-											 <input ng-change="CreditChange()" class="md-input masked_input" ng-model="tr.creditValue" id="zeeleer" type="text" data-inputmask="'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 2, 'digitsOptional': false, 'prefix': '₮ ', 'placeholder': '0'" data-inputmask-showmaskonhover="false" md-input />
+											 <input ng-model="tr.creditValue" ng-change="CreditChange()" class="md-input "  id="zeeleer" type="number" md-input />
 										 </div>
 									 </div>
 									 <div class="uk-width-medium-2-3">
 										 <div class="uk-form-row parsley-row">
-											 <select id="banks" ng-disabled="bankDefault" ng-model="tr.bankid" kendo-drop-down-list style="width: 100%" k-options="bankOptions"></select>
+											 <select id="banks" ng-disabled="bankDefault" ng-model="tr.bankId" kendo-drop-down-list style="width: 100%" k-options="bankOptions"></select>
 										 </div>
 										 <div class="uk-form-row parsley-row">
 											 <label for="thugatsaa">Төлөгдөх хугацаа / 14 хоног / <span class="req">*</span></label>
-											 <input type="text" ng-disabled="durationDefault" ng-model="tr.duration" name="val_birth" id="thugatsaa" required class="md-input" data-parsley-americandate data-parsley-americandate-message="This value should be a valid date (DD.MM.YYYY)" data-uk-datepicker="{format:'DD.MM.YYYY'}" md-input />
+											 <input type="text" ng-disabled="durationDefault" ng-model="tr.payTime" name="val_birth" id="thugatsaa"  class="md-input" data-uk-datepicker="{format:'DD.MM.YYYY'}" md-input />
 										 </div>
 									 </div>
 								 </div>
@@ -90,7 +90,7 @@
 						<div class="uk-grid">
 							<div class="uk-width-medium-1-1">
 								<button type="submit" style="float:right;" class="md-btn md-btn-primary md-btn-wave-light waves-effect waves-button waves-light">Хадгалах</button>
-								<button type="button" ng-click="back()" style="float:left;" class="md-btn md-btn-danger md-btn-wave-light waves-effect waves-button waves-light">Хаах</button>
+								<button type="button" ng-click="back()" style="float:left;" class="md-btn md-btn-danger md-btn-wave-light waves-effect waves-button waves-light">Буцах</button>
 							</div>
 						</div>
 					 </form>
@@ -98,10 +98,39 @@
 			 </div>
         </div>
     </div>
-	<footer id="footer">
-	    <span style="display:block;  text-align:right;">&copy; 2016-2017 <a href="www.tyder.kinder.mn">Tyder LLC</a>, All rights reserved.</span>
-	</footer>
+	<div ng-include="'/app/views/footer.html'"></div>
 
+	<div class="uk-modal" id="modal_inventory">
+		<div class="uk-modal-dialog" data-uk-grid-margin>
+			<button type="button" class="uk-modal-close uk-close uk-close-alt"></button>
+			<h3 class="heading_a">Бараа материал бүртгэл</h3>
+			<form name="form_val" id="form_val_inventory"  ng-submit="submitFormInventory($event)">
+				<hr style="margin-bottom:10px;">
+				<div class="uk-margin-medium-bottom">
+					<div class="uk-grid" data-uk-grid-margin>
+						<div class="uk-width-medium-1-1">
+							<div class="uk-form-row parsley-row">
+								<label for="locationCode">Бараа материалын бүлэг<span class="req">*</span></label>
+								<select id="aa" required ng-model="inv.group" kendo-drop-down-list style="width: 100%" k-options="locationOptions"></select>
+							</div>
+							<div class="uk-form-row parsley-row">
+								<label for="locationCode">Барааны нэр<span class="req">*</span></label>
+								<input type="text"id="invName" ng-model="inv.name" name="name" required class="md-input" md-input />
+							</div>
+							<div class="uk-form-row parsley-row">
+								<label for="locationName">Хэмжих нэгж<span class="req">*</span></label>
+								<input type="text"id="measurement" ng-model="inv.msId" name="msId" required class="md-input" md-input />
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="uk-modal-footer uk-text-right">
+					<button type="submit" class="md-btn md-btn-primary md-btn-wave-light waves-effect waves-button waves-light">Хадгалах</button>
+					<button type="button" class="md-btn md-btn-flat uk-modal-close">Хаах</button>
+				</div>
+			</form>
+		</div>
+	</div>
 
 	<div class="uk-modal" id="modal_location">
 		<div class="uk-modal-dialog" data-uk-grid-margin>
@@ -197,6 +226,13 @@
 		</div>
 	</div>
 
+	<script id="noDataInventoryTemplate" type="text/x-kendo-template">
+		<div>
+			Хайлтанд тохирох өгөгдөл олдсонгүй. Шинээр нэмэх үү - '#: instance.filterInput.val() #' ?
+		</div>
+		<br />
+		<button class="k-button" ng-click="newInventory('#: instance.filterInput.val() #')">Нэмэх</button>
+	</script>
 	<script id="noDataLocationTemplate" type="text/x-kendo-template">
 		<div>
 			Хайлтанд тохирох өгөгдөл олдсонгүй. Шинээр нэмэх үү - '#: instance.filterInput.val() #' ?
@@ -223,7 +259,7 @@
 
 	<script type="text/x-kendo-template" id="add">
          <div style="text-align:left;">
-           <button class="md-btn md-btn-success" ng-click='inventory()'> <span class='k-icon k-i-plus'></span>Бараа материал</button>
+           <button class="md-btn md-btn-primary md-btn-wave-light waves-effect waves-button waves-light k-grid-add"> <span class='k-icon k-i-plus'></span>Бараа материал</button>
          </div>
     </script>
 
@@ -240,3 +276,13 @@
 			</div>
 		</div>
 	</script>
+
+
+	<style>
+		.k-header.k-grid-toolbar{
+			border-color: #e6e6e6;
+		}
+		.k-header{
+			background-color: #fff;
+		}
+	</style>
