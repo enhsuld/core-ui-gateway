@@ -28,8 +28,8 @@ angular
 
 						transport: {
 							read:  {
-								url: "/api/core/list/SettingsMean?access_token="+$cookies.get('access_token'),
-								data: {"sort":[{field: 'id', dir: 'asc'}]},
+								url: "/api/core/list/EgJournal?access_token="+$cookies.get('access_token'),
+								data: {"custom":"where orgId="+$cookies.get('orgid')+"","sort":[{field: 'id', dir: 'asc'}]},
 								type: 'GET',
 								dataType: "json"
 							},
@@ -116,9 +116,16 @@ angular
 					},
 					columns: [
 						{title: "#",template: "<span class='row-number'></span>", width:60},
-                        { field:"orgid", values:orgs,title: "Нэр /Mn/", width: 200 },
-						{ field:"code", title: "Нэр /Mn/", width: 200 },
-						{ field: "mean", title:"URL"}
+                        { field:"orgid", title: "Огноо"},
+                        { field:"orgid", title: "Баримт №"},
+                        { field:"orgid", title: "Баримтын төрөл" },
+                        { field:"orgid", title: "Байршил"},
+						{ field:"code",  title: "Харилцагчийн нэр"},
+						{ field: "mean", title:"Гүйлгээний утга"},
+                        { field: "mean", title:"Худалдан авалтын дүн"},
+                        { field: "mean", title:"Төлбөрийн хэлбэр"},
+                        { field: "mean", title:"Төлбөр төлөлт"},
+                        { field: "mean", title:"Төлөгдөөгүй дүн"}
 					],
 					dataBound: function () {
 					var rows = this.items();

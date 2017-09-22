@@ -319,7 +319,7 @@ altairApp
                        companyProduct: function($http,$state,$cookies){
                            return $http({ method: 'GET', url: '/api/cmm/LutInventoryCompany/item/'+$cookies.get("orgid")})
                                .then(function (data) {
-                                   return data.data[0];
+                                   return data.data;
                                })
                                .catch(function(response) {
                                    $state.go("login");
