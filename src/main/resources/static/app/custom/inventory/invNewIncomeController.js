@@ -13,7 +13,9 @@ angular
                 var invGroup=[{"name":"Бараа материал","id":"Бараа материал"},{"name":"Түүхий эд материал","id":"Түүхий эд материал"},{"name":"Хангамжийн материал","id":"Хангамжийн материал"},{"name":"Бусад материал","id":"Бусад материал"}];
                 var measItem=[{"text":"Ширхэг","value":1},{"text":"Килограмм","value":2},{"text":"Тонн","value":3},{"text":"литр","value":4},{"text":"сав","value":5},{"text":"боодол","value":6},{"text":"Уут","value":7},{"text":"Хайрцаг","value":8},{"text":"Метр","value":9},{"text":"метр куб","value":10},{"text":"Метр квадрат","value":11},{"text":"Га","value":12}];
                 $rootScope.toBarActive = true;
+                $scope.tr={};
                 $scope.tr=egJournal;
+                $scope.tr.invoiceType=1;
                 $scope.$on('$destroy', function() {
                     $rootScope.toBarActive = false;
                 });
@@ -55,7 +57,7 @@ angular
                 var currDate = d.getDate();
                 var currMonth = d.getMonth();
                 var currYear = d.getFullYear();
-                $scope.tr.date = currDate+"."+currMonth+"."+currYear;
+                $scope.tr.egDate = currDate+"."+currMonth+"."+currYear;
                 $scope.bankDefault=true;
 
 

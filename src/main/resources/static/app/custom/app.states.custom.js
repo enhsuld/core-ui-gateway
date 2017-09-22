@@ -275,8 +275,17 @@ altairApp
                                'app/custom/inventory/invincomeController.js'
                            ]);
                        }],
-                       orgs: function($http,$state){
-                           return $http({ method: 'GET', url: '/api/core/resource/LutCmmOrganization' })
+                       companyLocation: function($http,$state,$cookies){
+                           return $http({ method: 'GET', url: '/api/cmm/LnkLocationCompany/item/'+$cookies.get("orgid")})
+                               .then(function (data) {
+                                   return data.data;
+                               })
+                               .catch(function(response) {
+                                   $state.go("login");
+                               });
+                       },
+                       companyCustomer: function($http,$state,$cookies){
+                           return $http({ method: 'GET', url: '/api/cmm/LnkCustomerCompany/item/'+$cookies.get("orgid")})
                                .then(function (data) {
                                    return data.data;
                                })
