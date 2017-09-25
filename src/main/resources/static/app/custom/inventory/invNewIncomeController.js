@@ -11,13 +11,14 @@ angular
                 $scope.domainJournal="com.macro.dev.models.EgJournal.";
                 $scope.domainLutInventory="com.macro.dev.models.LutInventoryCompany.";
                 var invGroup=[{"name":"Бараа материал","id":"Бараа материал"},{"name":"Түүхий эд материал","id":"Түүхий эд материал"},{"name":"Хангамжийн материал","id":"Хангамжийн материал"},{"name":"Бусад материал","id":"Бусад материал"}];
-                var measItem=[{"name":"Ширхэг","id":1},{"name":"Килограмм","id":2},{"name":"Тонн","id":3},{"name":"литр","id":4},{"name":"сав","id":5},{"name":"боодол","id":6},{"name":"Уут","id":7},{"name":"Хайрцаг","id":8},{"name":"Метр","id":9},{"name":"метр куб","id":10},{"name":"Метр квадрат","id":11},{"name":"Га","id":12}];
+                var measItem=[{"text":"Ширхэг","value":1},{"text":"Килограмм","value":2},{"text":"Тонн","value":3},{"text":"литр","value":4},{"text":"сав","value":5},{"text":"боодол","value":6},{"text":"Уут","value":7},{"text":"Хайрцаг","value":8},{"text":"Метр","value":9},{"text":"метр куб","value":10},{"text":"Метр квадрат","value":11},{"text":"Га","value":12}];
                 $rootScope.toBarActive = true;
+                $scope.tr={};
                 $scope.tr=egJournal;
+                $scope.tr.invoiceType=1;
                 $scope.$on('$destroy', function() {
                     $rootScope.toBarActive = false;
                 });
-                console.log(companyProduct);
                 var $maskedInput = $('.masked_input');
                 if($maskedInput.length) {
                     $maskedInput.inputmask();
@@ -56,7 +57,7 @@ angular
                 var currDate = d.getDate();
                 var currMonth = d.getMonth();
                 var currYear = d.getFullYear();
-                $scope.tr.date = currDate+"."+currMonth+"."+currYear;
+                $scope.tr.egDate = currDate+"."+currMonth+"."+currYear;
                 $scope.bankDefault=true;
 
 
@@ -106,7 +107,6 @@ angular
 
                 $scope.inv={};
                 $scope.newInventory = function(y){
-                    console.log();
                     $scope.inv.name=y;
                     $scope.inv.orgId=$cookies.get("orgid");
                     modal_inventory.show();
@@ -156,7 +156,10 @@ angular
                     transport: {
                         read: {
                             url: "/api/cmm/resource/LutInventoryCompany?access_token="+$cookies.get('access_token'),
-                            data: {"custom":"where orgId = " + $cookies.get("orgid"),"sort":[{field: 'id', dir: 'asc'}]}
+                            data: {"custom":"where orgId = " + $cookies.get("orgid"),"sort":[{field: 'id', dir: 'asc'}],"filter":{}},
+                            complete:function(e){
+
+                            }
                         },
                         parameterMap: function(options) {
                             options.data=JSON.stringify( options)
@@ -197,20 +200,44 @@ angular
                 $scope.submitJournalForm = function(){
                     mainService.withdata('POST', '/api/cmm/action/update/'+$scope.domainJournal,  $scope.tr).
                     then(function(data){
-                        alert();
+                        UIkit.notify({
+                            message : "Амжилттай бүртгэлээ...",
+                            status  : 'info',
+                            timeout : 3000,
+                            pos     : 'top-right'
+                        });
+                        $state.go('restricted.inv.income');
                     });
                 };
 
+                $scope.invAlertMeas=false;
+                $scope.invAlertGroup=false;
                 $scope.submitFormInventory = function(){
-                    mainService.withdata('POST', '/api/cmm/action/create/'+$scope.domainLutInventory,  $scope.inv).
-                    then(function(data){
-                        modal_inventory.hide();
-                        inventoryDataSource.read();
-                    });
+                    if($scope.inv.measId==undefined){
+                        $scope.invAlertMeas=true;
+                    }
+                    else{
+                        $scope.invAlertMeas=false;
+                    }
+                    if($scope.inv.groupName==undefined){
+                        $scope.invAlertGroup=true;
+                    }
+                    else{
+                        $scope.invAlertGroup=false;
+                    }
+                    if($scope.inv.groupName!=undefined && $scope.inv.measId!=undefined){
+                        mainService.withdata('POST', '/api/cmm/action/create/'+$scope.domainLutInventory,  $scope.inv).
+                        then(function(data){
+                            modal_inventory.hide();
+                            companyProduct.push(data);
+                            $state.reload();
+                        });
+                    }
+
                 };
 
                 $scope.categoryDropDownEditor = function(container, options) {
-                    var editor = $('<input kendo-drop-down-list k-options="invOptions" data-bind="value:' + options.value + '"/>')
+                    var editor = $('<input kendo-drop-down-list ng-model=\"dataItem.invId\" k-data-text-field="\'name\'" k-data-value-field="\'id\'"  k-options="invOptions" data-bind="value:' + options.field + '"/>')
                         .appendTo(container);
                 };
 
@@ -221,15 +248,17 @@ angular
 
 
                 $scope.groupOptions = {
+                    filter: "startswith",
                     dataSource: invGroup,
                     dataTextField: "name",
                     dataValueField: "id",
                     optionLabel: "Бараа материалын бүлэг..."
                 };
                 $scope.measOptions = {
+                    filter: "startswith",
                     dataSource: measItem,
-                    dataTextField: "name",
-                    dataValueField: "id",
+                    dataTextField: "text",
+                    dataValueField: "value",
                     optionLabel: "Хэмжих нэгж..."
                 };
 
@@ -312,13 +341,11 @@ angular
                 };
 
 
-                var modal_inventory = UIkit.modal("#modal_inventory");
+              //  var modal_inventory = UIkit.modal("#modal_inventory");
 
                 $scope.back=function () {
                     $state.go('restricted.inv.income');
-                }
-
-
+                };
 
                 var $formValidate = $('#form_val');
                 $formValidate
@@ -344,7 +371,7 @@ angular
                                 var aggregates = gridDataSource.aggregates();
                                 $scope.tr.cashValue=($scope.tr.bankValue+$scope.tr.creditValue-aggregates.invTotal.sum)*(-1);
                                 $scope.pmenuGrid.getTotal = function(){
-                                    return "Нийт: "+aggregates.invTotal.sum +"₮";
+                                    return aggregates.invTotal.sum ;
                                 }
                             }
                         },
@@ -354,10 +381,20 @@ angular
                             type:"POST",
                             complete: function(e) {
                                 $(".k-grid").data("kendoGrid").dataSource.read();
-                                var aggregates = gridDataSource.aggregates();
-                                $scope.pmenuGrid.getTotal = function(){
-                                    $scope.tr.cashValue=($scope.tr.bankValue+$scope.tr.creditValue-aggregates.invTotal.sum)*(-1);
-                                    return "Нийт: "+aggregates.invTotal.sum +"₮";
+                                if(e.responseText=="true"){
+                                    $scope.pmenuGrid.getTotal = function(){
+                                        var aggregates = gridDataSource.aggregates();
+                                        $scope.tr.cashValue=($scope.tr.bankValue+$scope.tr.creditValue-aggregates.invTotal.sum)*(-1);
+                                        return aggregates.invTotal.sum ;
+                                    }
+                                }
+                                else{
+                                    UIkit.notify({
+                                        message : "Бараа материалаа сонгоно уу",
+                                        status  : 'danger',
+                                        timeout : 3000,
+                                        pos     : 'top-right'
+                                    });
                                 }
                             }
                         },
@@ -366,16 +403,16 @@ angular
                             dataType: "json",
                             type:"POST",
                             complete: function(e) {
-
-                                var aggregates = gridDataSource.aggregates();
+                                $(".k-grid").data("kendoGrid").dataSource.read();
                                 $scope.pmenuGrid.getTotal = function(){
+                                    var aggregates = gridDataSource.aggregates();
                                     $scope.tr.cashValue=($scope.tr.bankValue+$scope.tr.creditValue-aggregates.invTotal.sum)*(-1);
-                                    return "Нийт: "+aggregates.invTotal.sum +"₮";
+                                    return aggregates.invTotal.sum ;
                                 }
                             }
                         },
                         create: {
-                            url: "/api/core/create/"+$scope.domain+"?access_token="+$cookies.get('access_token'),
+                            url: "/api/cmm/create/"+$scope.domain+"?access_token="+$cookies.get('access_token'),
                             dataType: "json",
                             data: {"egId": $stateParams.id,"orgId":$cookies.get("orgid")},
                             type:"POST",
@@ -452,11 +489,10 @@ angular
 					columns: [
 						{title: "#",template: "<span class='row-number'></span>", width:60},
                         { field:"invId", values:companyProduct,editor: $scope.categoryDropDownEditor,title: "Барааны нэр"},
-                        { field:"measId", title: "Хэмжих нэгж", width: 150},
-                        { field:"locId", title: "Байршил", editor: $scope.locationEditor,width: 150},
+                        { field:"measId", values:measItem, title: "Хэмжих нэгж", width: 150},
                         { field:"invCount", title: "Тоо хэмжээ", width: 150},
                         { field:"invPrise", title: "Нэгжийн үнэ", width: 150 },
-                        { field:"invTotal",title: "Дүн", width: 150 ,aggregates: ["sum"],   footerTemplate: "<span ng-bind=pmenuGrid.getTotal()></span>"},
+                        { field:"invTotal",title: "Дүн", width: 150 ,aggregates: ["sum"],  format: "{0:n}",  footerTemplate: "Нийт: <span ng-bind='pmenuGrid.getTotal() | currency:&quot;₮&quot;'>"},
                         { command: ["destroy"], title: "&nbsp;", width: 140}
 					],
                     editable:true,
@@ -476,7 +512,7 @@ angular
                 $scope.pmenuGrid.getTotal = function(){
                     var aggregates = gridDataSource.aggregates();
                     $scope.tr.cashValue=($scope.tr.bankValue+$scope.tr.creditValue-aggregates.invTotal.sum)*(-1);
-                    return "Нийт: "+aggregates.invTotal.sum +"₮";
+                    return aggregates.invTotal.sum ;
                 };
 
                 $scope.BankChange = function(){

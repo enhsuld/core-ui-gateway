@@ -1,9 +1,9 @@
 angular
     .module('altairApp')
-    	.controller("invincomeCtrl",['$scope','$rootScope','orgs','mainService','$state','sweet','$cookies',
-	        function ($scope,$rootScope,orgs,mainService,$state,sweet,$cookies) {
+    	.controller("invincomeCtrl",['$scope','$rootScope','companyLocation','companyCustomer','mainService','$state','sweet','$cookies',
+	        function ($scope,$rootScope,companyLocation,companyCustomer,mainService,$state,sweet,$cookies) {
 	    		var aj=[{"text":"ROOT","value":"null"}];
-                var forumType=[{"text":"inline","value":1},{"text":"pop-up","value":2},{"text":"batch","value":3},{"text":"custom","value":4}];
+                var invType=[{"text":"Бараа материалын худалдан авалт","value":1},{"text":"pop-up","value":2},{"text":"batch","value":3},{"text":"custom","value":4}];
                 $scope.domain="com.macro.dev.models.EgJournal.";
 
                 $rootScope.toBarActive = true;
@@ -28,8 +28,8 @@ angular
 
 						transport: {
 							read:  {
-								url: "/api/core/list/SettingsMean?access_token="+$cookies.get('access_token'),
-								data: {"sort":[{field: 'id', dir: 'asc'}]},
+								url: "/api/core/list/EgJournal?access_token="+$cookies.get('access_token'),
+								data: {"custom":"where orgId="+$cookies.get('orgid')+"","sort":[{field: 'id', dir: 'asc'}]},
 								type: 'GET',
 								dataType: "json"
 							},
@@ -116,9 +116,16 @@ angular
 					},
 					columns: [
 						{title: "#",template: "<span class='row-number'></span>", width:60},
-                        { field:"orgid", values:orgs,title: "Нэр /Mn/", width: 200 },
-						{ field:"code", title: "Нэр /Mn/", width: 200 },
-						{ field: "mean", title:"URL"}
+                        { field:"egDate", title: "Огноо", width:120},
+                        { field:"invoiceNo", title: "Баримт №", width:120},
+                        { field:"invoiceType",values:invType,width:150, headerAttributes: {style: "padding: .786em .6em; white-space: normal;  text-align:center;"}, title: "Баримтын төрөл" },
+                        { field:"locationId", values:companyLocation,title: "Байршил",width:150},
+						{ field:"customerId", values:companyCustomer, title: "Харилцагчийн нэр",width:150},
+						{ field: "mean", title:"Гүйлгээний утга"},
+                        { field: "mean", headerAttributes: {style: "padding: .786em .6em; white-space: normal;  text-align:center;"}, title:"Худалдан авалтын дүн"},
+                        { field: "mean", title:"Төлбөрийн хэлбэр"},
+                        { field: "mean", title:"Төлбөр төлөлт"},
+                        { field: "mean", title:"Төлөгдөөгүй дүн"}
 					],
 					dataBound: function () {
 					var rows = this.items();
@@ -131,6 +138,10 @@ angular
 				   },
 
 				};
+
+				$scope.edit= function (y) {
+					$state.go("restricted.inv.newincome", {'id':y});
+                };
 
 			if($rootScope.ruptype==1){
 				$scope.pmenuGrid.editable="inline";
@@ -192,7 +203,7 @@ angular
 			if($rootScope.ruptype==4){
 			//	$scope.pmenuGrid.toolbar= kendo.template($("#add").html());
 				$scope.pmenuGrid.editable="popup";
-				$scope.pmenuGrid.columns.push({template: kendo.template($("#update").html()), width: "200px"});
+				$scope.pmenuGrid.columns.push({template: kendo.template($("#update").html()), width: "150px"});
 			}
 	        
 		}

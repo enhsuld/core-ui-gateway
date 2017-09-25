@@ -20,12 +20,11 @@
          </div>
     </script>
     <script type="text/x-kendo-template" id="update">
-         <div id="details-container" style="float:left;">
-           <button class="md-btn md-btn-small md-btn-primary" ng-click='edit(#:id#)'> </span>засах</button>
-         </div>
-		<div id="details-container1" style="float:left; margin-left: 20px;">
+		 <button class="md-btn md-btn-small md-btn-primary md-btn-wave-light waves-effect waves-button waves-light"  ng-click='edit(#:id#)'><span style="opacity:1;" class="k-icon k-i-edit"></span></button>
+		 <button class="md-btn md-btn-small md-btn-danger k-grid-delete md-btn-wave-light waves-effect waves-button waves-light" ng-click='deleteO(#:id#)'><span style="opacity:1;" class="k-icon k-i-close"></span></button>
+		<!--<div id="details-container1" style="float:left; margin-left: 20px;">
            <button class="md-btn md-btn-small md-btn-danger" ng-click='deleteO(#:id#)'> </span>устгах</button>
-         </div>
+         </div>-->
     </script>
 
 	<script type="x/kendo-template" id="page-template">
