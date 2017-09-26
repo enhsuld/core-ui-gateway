@@ -23,6 +23,12 @@ angular
                 }
             };
 
+            $scope.newInventory = function(y){
+                //$scope.inv.name=y;
+                //$scope.inv.orgId=$cookies.get("orgid");
+                modal_inventory.show();
+            };
+
             var crudServiceBaseUrl = "https://demos.telerik.com/kendo-ui/service";
             var dataSource = new kendo.data.DataSource({
                 batch: true,
