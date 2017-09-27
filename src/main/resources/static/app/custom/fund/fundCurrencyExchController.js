@@ -23,10 +23,16 @@ angular
                 }
             };
 
-            $scope.newInventory = function(y){
+            $scope.buycurr = function(y){
                 //$scope.inv.name=y;
                 //$scope.inv.orgId=$cookies.get("orgid");
-                modal_inventory.show();
+                modal_buycurr.show();
+            };
+
+            $scope.sellcurr = function(y){
+                //$scope.inv.name=y;
+                //$scope.inv.orgId=$cookies.get("orgid");
+                modal_sellcurr.show();
             };
 
             var crudServiceBaseUrl = "https://demos.telerik.com/kendo-ui/service";
@@ -120,15 +126,9 @@ angular
             };
 
 
-            var modal_inventory = UIkit.modal("#modal_inventory");
-            $scope.fundincome = function(){
-                // modal_inventory.show();
-                $state.go('restricted.fund.newincome');
-            }
-            $scope.fundexp = function(){
-                // modal_inventory.show();
-                $state.go('restricted.fund.newexp');
-            }
+            var modal_buycurr = UIkit.modal("#modal_buycurr");
+            var modal_sellcurr = UIkit.modal("#modal_sellcurr");
+
 
             var $maskedInput = $('.masked_input');
             if($maskedInput.length) {
