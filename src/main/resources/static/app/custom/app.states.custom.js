@@ -17,8 +17,7 @@ altairApp
                     label: 'Аудит'
                 }
             })
-
-                .state("restricted.fund.income", {
+               .state("restricted.fund.income", {
                     url: "/income",
                     templateUrl: 'app/custom/fund/fundincomeView.html',
                     controller: 'fundincomeCtrl',
@@ -231,6 +230,81 @@ altairApp
                                'lazy_masked_inputs',
                                'lazy_character_counter',
                                'app/custom/fund/fundCurrencyExchController.js'
+                           ]);
+                       }],
+                       orgs: function($http,$state){
+                           return $http({ method: 'GET', url: '/api/core/resource/LutCmmOrganization' })
+                               .then(function (data) {
+                                   return data.data;
+                               })
+                               .catch(function(response) {
+                                   $state.go("login");
+                               });
+                       }
+                   },
+                   data: {
+                       pageTitle: 'Мөнгөн хөрөнгө'
+                   },
+                   ncyBreadcrumb: {
+                       label: 'Мөнгөн хөрөнгө'
+                   }
+               })
+
+               .state("restricted.fasset", {
+                   url: "/asset",
+                   template: '<div ui-view autoscroll="false" ng-class="{ \'uk-height-1-1\': page_full_height }"/>',
+                   abstract: true,
+                   ncyBreadcrumb: {
+                       label: 'Аудит'
+                   }
+               })
+
+               .state("restricted.fasset.buys", {
+                   url: "/buys",
+                   templateUrl: 'app/custom/fasset/fassetBuysView.html',
+                   controller: 'fassetbuysCtrl',
+                   resolve: {
+                       deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                           return $ocLazyLoad.load([
+                               'lazy_KendoUI',
+                               'lazy_parsleyjs',
+                               'lazy_ionRangeSlider',
+                               'lazy_masked_inputs',
+                               'lazy_character_counter',
+                               'app/custom/fasset/fassetBuysController.js'
+                           ]);
+                       }],
+                       orgs: function($http,$state){
+                           return $http({ method: 'GET', url: '/api/core/resource/LutCmmOrganization' })
+                               .then(function (data) {
+                                   return data.data;
+                               })
+                               .catch(function(response) {
+                                   $state.go("login");
+                               });
+                       }
+                   },
+                   data: {
+                       pageTitle: 'Мөнгөн хөрөнгө'
+                   },
+                   ncyBreadcrumb: {
+                       label: 'Мөнгөн хөрөнгө'
+                   }
+               })
+
+               .state("restricted.fasset.add", {
+                   url: "/add",
+                   templateUrl: 'app/custom/fasset/fassetAddAssetView.html',
+                   controller: 'fassetaddCtrl',
+                   resolve: {
+                       deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                           return $ocLazyLoad.load([
+                               'lazy_KendoUI',
+                               'lazy_parsleyjs',
+                               'lazy_ionRangeSlider',
+                               'lazy_masked_inputs',
+                               'lazy_character_counter',
+                               'app/custom/fasset/fassetAddAssetController.js'
                            ]);
                        }],
                        orgs: function($http,$state){
