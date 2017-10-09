@@ -115,13 +115,9 @@ angular
 
 
             var modal_inventory = UIkit.modal("#modal_inventory");
-            $scope.fundincome = function(){
+            $scope.addAsset = function(){
                 // modal_inventory.show();
-                $state.go('restricted.fund.newincome');
-            }
-            $scope.fundexp = function(){
-                // modal_inventory.show();
-                $state.go('restricted.fund.newexp');
+                $state.go('restricted.fasset.add');
             }
 
             $scope.pmenuGrid = {

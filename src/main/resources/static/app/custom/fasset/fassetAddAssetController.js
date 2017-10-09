@@ -163,7 +163,7 @@ angular
             }
 
             $scope.back=function () {
-                $state.go('restricted.fund.income');
+                $state.go('restricted.fasset.buys');
             }
 
             var $maskedInput = $('.masked_input');
