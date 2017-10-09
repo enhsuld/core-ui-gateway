@@ -325,6 +325,139 @@ altairApp
                    }
                })
 
+               .state("restricted.fasset.sells", {
+                   url: "/sells",
+                   templateUrl: 'app/custom/fasset/fassetSellsView.html',
+                   controller: 'fassetsellsCtrl',
+                   resolve: {
+                       deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                           return $ocLazyLoad.load([
+                               'lazy_KendoUI',
+                               'lazy_parsleyjs',
+                               'lazy_ionRangeSlider',
+                               'lazy_masked_inputs',
+                               'lazy_character_counter',
+                               'app/custom/fasset/fassetSellsController.js'
+                           ]);
+                       }],
+                       orgs: function($http,$state){
+                           return $http({ method: 'GET', url: '/api/core/resource/LutCmmOrganization' })
+                               .then(function (data) {
+                                   return data.data;
+                               })
+                               .catch(function(response) {
+                                   $state.go("login");
+                               });
+                       }
+                   },
+                   data: {
+                       pageTitle: 'Мөнгөн хөрөнгө'
+                   },
+                   ncyBreadcrumb: {
+                       label: 'Мөнгөн хөрөнгө'
+                   }
+               })
+
+               .state("restricted.fasset.addsells", {
+                   url: "/addsells",
+                   templateUrl: 'app/custom/fasset/fassetAddAssetView.html',
+                   controller: 'fassetaddsellsCtrl',
+                   resolve: {
+                       deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                           return $ocLazyLoad.load([
+                               'lazy_KendoUI',
+                               'lazy_parsleyjs',
+                               'lazy_ionRangeSlider',
+                               'lazy_masked_inputs',
+                               'lazy_character_counter',
+                               'app/custom/fasset/fassetAddSellsController.js'
+                           ]);
+                       }],
+                       orgs: function($http,$state){
+                           return $http({ method: 'GET', url: '/api/core/resource/LutCmmOrganization' })
+                               .then(function (data) {
+                                   return data.data;
+                               })
+                               .catch(function(response) {
+                                   $state.go("login");
+                               });
+                       }
+                   },
+                   data: {
+                       pageTitle: 'Мөнгөн хөрөнгө'
+                   },
+                   ncyBreadcrumb: {
+                       label: 'Мөнгөн хөрөнгө'
+                   }
+               })
+
+               .state("restricted.fasset.expense", {
+                   url: "/expense",
+                   templateUrl: 'app/custom/fasset/fassetExpenseView.html',
+                   controller: 'fassetexpenseCtrl',
+                   resolve: {
+                       deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                           return $ocLazyLoad.load([
+                               'lazy_KendoUI',
+                               'lazy_parsleyjs',
+                               'lazy_ionRangeSlider',
+                               'lazy_masked_inputs',
+                               'lazy_character_counter',
+                               'app/custom/fasset/fassetExpenseController.js'
+                           ]);
+                       }],
+                       orgs: function($http,$state){
+                           return $http({ method: 'GET', url: '/api/core/resource/LutCmmOrganization' })
+                               .then(function (data) {
+                                   return data.data;
+                               })
+                               .catch(function(response) {
+                                   $state.go("login");
+                               });
+                       }
+                   },
+                   data: {
+                       pageTitle: 'Мөнгөн хөрөнгө'
+                   },
+                   ncyBreadcrumb: {
+                       label: 'Мөнгөн хөрөнгө'
+                   }
+               })
+
+
+               .state("restricted.fasset.addexpense", {
+                   url: "/addexpense",
+                   templateUrl: 'app/custom/fasset/fassetAddExpenseView.html',
+                   controller: 'fassetaddexpenseCtrl',
+                   resolve: {
+                       deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                           return $ocLazyLoad.load([
+                               'lazy_KendoUI',
+                               'lazy_parsleyjs',
+                               'lazy_ionRangeSlider',
+                               'lazy_masked_inputs',
+                               'lazy_character_counter',
+                               'app/custom/fasset/fassetAddExpenseController.js'
+                           ]);
+                       }],
+                       orgs: function($http,$state){
+                           return $http({ method: 'GET', url: '/api/core/resource/LutCmmOrganization' })
+                               .then(function (data) {
+                                   return data.data;
+                               })
+                               .catch(function(response) {
+                                   $state.go("login");
+                               });
+                       }
+                   },
+                   data: {
+                       pageTitle: 'Мөнгөн хөрөнгө'
+                   },
+                   ncyBreadcrumb: {
+                       label: 'Мөнгөн хөрөнгө'
+                   }
+               })
+
                .state("restricted.inv", {
                    url: "/inventory",
                    template: '<div ui-view autoscroll="false" ng-class="{ \'uk-height-1-1\': page_full_height }"/>',
